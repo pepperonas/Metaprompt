@@ -28,6 +28,10 @@ mac:
       arch: [universal]
   icon: resources/icon.icns
   category: public.app-category.productivity
+  extendInfo:
+    CFBundleName: MRP
+    CFBundleDisplayName: MRP
+    CFBundleExecutable: MRP
 
 # Linux - AppImage
 linux:

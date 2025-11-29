@@ -16,12 +16,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // App-Name für macOS Dock setzen (muss sehr früh gesetzt werden, bevor app ready ist)
-// Im Entwicklungsmodus muss der Name mehrfach gesetzt werden
+// Wichtig: Muss vor app.whenReady() gesetzt werden
 app.setName('MRP');
 
-// Zusätzlich für macOS: Setze auch den Bundle-Namen
+// Für macOS: Setze auch den Bundle-Namen über process.env (für Entwicklungsmodus)
 if (process.platform === 'darwin') {
-  app.dock?.setIcon(path.join(__dirname, '../../resources/icon.png'));
+  process.env.ELECTRON_APP_NAME = 'MRP';
 }
 
 let mainWindow: BrowserWindow | null = null;
@@ -85,9 +85,44 @@ app.whenReady().then(() => {
   // Muss nach app.whenReady() nochmal gesetzt werden für macOS
   app.setName('MRP');
   
-  // Für macOS Dock: Setze auch den Badge-Text (falls nötig)
+  // Für macOS: Aktualisiere den Dock-Namen
   if (process.platform === 'darwin') {
-    app.dock?.setBadge('');
+    // Setze den Namen nochmal nach app ready
+    app.setName('MRP');
+    // Optional: Dock-Icon setzen falls vorhanden
+    try {
+      // Prüfe verschiedene mögliche Pfade für das Icon
+      const possibleIconPaths = [
+        path.join(__dirname, '../../resources/icon.png'),
+        path.join(process.cwd(), 'resources/icon.png'),
+        path.join(app.getAppPath(), 'resources/icon.png'),
+      ];
+      
+      const { nativeImage } = require('electron');
+      let iconSet = false;
+      
+      for (const iconPath of possibleIconPaths) {
+        try {
+          const icon = nativeImage.createFromPath(iconPath);
+          if (!icon.isEmpty()) {
+            app.dock?.setIcon(iconPath);
+            iconSet = true;
+            break;
+          }
+        } catch (e) {
+          // Weiter zum nächsten Pfad
+          continue;
+        }
+      }
+      
+      if (!iconSet) {
+        // Kein Icon gefunden, verwende Standard-Icon
+        console.log('Kein Custom-Icon gefunden, verwende Standard-Icon');
+      }
+    } catch (e) {
+      // Icon nicht gefunden, ignorieren
+      console.log('Fehler beim Setzen des Dock-Icons:', e);
+    }
   }
   
   createWindow();
