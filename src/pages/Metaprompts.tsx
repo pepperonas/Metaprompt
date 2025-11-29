@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import type { Metaprompt } from '../types';
 
 const Metaprompts: React.FC = () => {
-  const { metaprompts, loadMetaprompts, saveMetaprompt, deleteMetaprompt, createMetaprompt, setDefault } = useMetapromptsStore();
+  const { metaprompts, loadMetaprompts, saveMetaprompt, deleteMetaprompt, setDefault } = useMetapromptsStore();
   const { settings, updateSettings } = useSettingsStore();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showEditor, setShowEditor] = useState(false);
@@ -28,10 +28,18 @@ const Metaprompts: React.FC = () => {
       mp.createdAt = new Date();
     }
     
-    // Stelle sicher, dass der Standard-Metaprompt immer isDefault bleibt
+    // Stelle sicher, dass nur der Standard-Metaprompt isDefault sein kann
     const existingMetaprompt = metaprompts.find(m => m.id === mp.id);
-    if (existingMetaprompt?.isDefault) {
-      mp.isDefault = true; // Erzwinge isDefault für Standard-Metaprompt
+    const isStandardMetaprompt = existingMetaprompt?.isDefault || false;
+    
+    // Wenn es der Standard-Metaprompt ist, behalte isDefault bei
+    // Wenn es kein Standard-Metaprompt ist, entferne isDefault
+    mp.isDefault = isStandardMetaprompt;
+    
+    // Verhindere, dass ein anderer Metaprompt als Standard markiert wird
+    if (mp.isDefault && !isStandardMetaprompt) {
+      alert('Nur der Standard-Metaprompt kann als Standard markiert werden.');
+      mp.isDefault = false;
     }
     
     mp.updatedAt = new Date();
@@ -73,10 +81,8 @@ const Metaprompts: React.FC = () => {
     await loadMetaprompts();
     setShowGenerator(false);
     
-    // Optional: Automatisch aktivieren
-    if (confirm('Metaprompt wurde erstellt. Möchtest du ihn jetzt aktivieren?')) {
-      await handleSetActive(newMetaprompt.id);
-    }
+    // Hinweis: Metaprompt kann im Dashboard aktiviert werden
+    alert('Metaprompt wurde erstellt. Du kannst ihn im Dashboard aktivieren.');
   };
 
   const handleEdit = (id: string) => {
@@ -103,10 +109,6 @@ const Metaprompts: React.FC = () => {
     }
   };
 
-  const handleSetActive = async (id: string) => {
-    await setDefault(id);
-    await updateSettings({ activeMetapromptId: id });
-  };
 
   if (showEditor) {
     return (
@@ -141,7 +143,7 @@ const Metaprompts: React.FC = () => {
           <h2 className="text-2xl font-bold text-text-primary mb-2">Metaprompts</h2>
           <p className="text-text-secondary">
             Metaprompts sind Vorlagen, die definieren, wie normale Prompts optimiert werden sollen. 
-            Erstelle mehrere Vorlagen und aktiviere sie nach Bedarf.
+            Erstelle mehrere Vorlagen und wähle sie im Dashboard aus.
           </p>
         </div>
         <div className="flex space-x-2">
@@ -163,10 +165,18 @@ const Metaprompts: React.FC = () => {
             if (a.isDefault && !b.isDefault) return -1;
             if (!a.isDefault && b.isDefault) return 1;
             return 0;
-          }).map((mp) => (
+          }).map((mp) => {
+            const isActive = settings?.activeMetapromptId === mp.id;
+            return (
             <Card 
               key={mp.id}
-              className={mp.isDefault ? 'border-2 border-brand bg-brand bg-opacity-5' : ''}
+              className={`${
+                mp.isDefault 
+                  ? 'border-2 border-brand bg-brand bg-opacity-5' 
+                  : isActive 
+                  ? 'border-2 border-blue-500 bg-blue-500 bg-opacity-5' 
+                  : ''
+              }`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
@@ -184,16 +194,6 @@ const Metaprompts: React.FC = () => {
                         Standard
                       </span>
                     )}
-                    {settings?.activeMetapromptId === mp.id && !mp.isDefault && (
-                      <span className="text-xs px-2 py-1 bg-green-500 bg-opacity-20 text-green-400 rounded">
-                        Aktiv
-                      </span>
-                    )}
-                    {settings?.activeMetapromptId === mp.id && mp.isDefault && (
-                      <span className="text-xs px-2 py-1 bg-green-500 bg-opacity-30 text-green-300 rounded border border-green-500/50">
-                        Aktiv
-                      </span>
-                    )}
                   </div>
                   {mp.description && (
                     <p className="text-sm text-text-secondary mb-2">{mp.description}</p>
@@ -204,14 +204,11 @@ const Metaprompts: React.FC = () => {
                   </p>
                 </div>
                 <div className="flex space-x-2 ml-4">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => handleSetActive(mp.id)}
-                    disabled={settings?.activeMetapromptId === mp.id}
-                  >
-                    Aktivieren
-                  </Button>
+                  {settings?.activeMetapromptId === mp.id && (
+                    <span className="text-xs px-3 py-1 bg-green-500 bg-opacity-30 text-green-300 rounded border border-green-500/50 font-medium">
+                      Aktiv
+                    </span>
+                  )}
                   {!mp.isDefault && (
                     <>
                       <Button
@@ -233,7 +230,8 @@ const Metaprompts: React.FC = () => {
                 </div>
               </div>
             </Card>
-          ))
+            );
+          })
         )}
       </div>
     </div>

@@ -19,7 +19,6 @@ export const MetapromptEditor: React.FC<MetapromptEditorProps> = ({
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [content, setContent] = useState('');
-  const [isDefault, setIsDefault] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -27,7 +26,6 @@ export const MetapromptEditor: React.FC<MetapromptEditorProps> = ({
       setName(metaprompt.name);
       setDescription(metaprompt.description || '');
       setContent(metaprompt.content);
-      setIsDefault(metaprompt.isDefault);
     }
   }, [metaprompt]);
 
@@ -38,8 +36,8 @@ export const MetapromptEditor: React.FC<MetapromptEditorProps> = ({
 
     setLoading(true);
     try {
-      // Stelle sicher, dass der Standard-Metaprompt immer isDefault bleibt
-      const finalIsDefault = metaprompt?.isDefault ? true : isDefault;
+      // Stelle sicher, dass nur der Standard-Metaprompt isDefault sein kann
+      const finalIsDefault = metaprompt?.isDefault || false;
       
       const mp: Metaprompt = {
         id: metaprompt?.id || '', // Wird in der Page-Komponente gesetzt wenn leer
@@ -82,20 +80,16 @@ export const MetapromptEditor: React.FC<MetapromptEditorProps> = ({
           rows={12}
           className="font-mono text-sm"
         />
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            id="isDefault"
-            checked={isDefault}
-            onChange={(e) => setIsDefault(e.target.checked)}
-            disabled={metaprompt?.isDefault}
-            className="w-4 h-4 text-brand bg-bg-secondary border-bg-primary rounded focus:ring-brand disabled:opacity-50 disabled:cursor-not-allowed"
-          />
-          <label htmlFor="isDefault" className={`ml-2 text-sm ${metaprompt?.isDefault ? 'text-text-secondary opacity-50' : 'text-text-secondary'}`}>
-            Als Standard markieren
-            {metaprompt?.isDefault && ' (Standard-Metaprompt ist immer Standard)'}
-          </label>
-        </div>
+        {metaprompt?.isDefault && (
+          <div className="flex items-center p-3 bg-brand bg-opacity-10 border border-brand rounded-lg">
+            <svg className="w-5 h-5 text-brand mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <span className="text-sm text-brand font-medium">
+              Dies ist der Standard-Metaprompt und kann nicht geändert werden.
+            </span>
+          </div>
+        )}
         <div className="flex space-x-2">
           <Button onClick={handleSave} disabled={loading || !name.trim() || !content.trim()}>
             {loading ? 'Speichern...' : 'Speichern'}

@@ -47,6 +47,7 @@ const createWindow = (): void => {
       nodeIntegration: false,
       contextIsolation: true,
       sandbox: false,
+      webSecurity: true,
     },
   });
 
