@@ -25,10 +25,10 @@ win:
 portable:
   artifactName: "MRP-${version}-Windows-Portable.exe"
 
-# macOS - Universal Binary
+# macOS - DMG
 mac:
   target:
-    - target: dir
+    - target: dmg
       arch: [x64, arm64]
   icon: resources/icon.icns
   category: public.app-category.productivity
@@ -40,6 +40,19 @@ mac:
   asarUnpack:
     - "**/LICENSE"
     - "**/LICENSE*"
+  # Code-Signierung deaktivieren für Development Build
+  identity: null
+  
+dmg:
+  title: "MRP ${version}"
+  artifactName: "MRP-${version}-macOS.dmg"
+  contents:
+    - x: 130
+      y: 220
+    - x: 410
+      y: 220
+      type: link
+      path: /Applications
 
 # Linux - AppImage
 linux:
