@@ -28,6 +28,11 @@ contextBridge.exposeInMainWorld('mrp', {
   getHistory: (): Promise<any[]> => ipcRenderer.invoke('history:get'),
   addHistory: (entry: any): Promise<void> => ipcRenderer.invoke('history:add', entry),
   
+  // App Info
+  app: {
+    getVersion: (): Promise<string> => ipcRenderer.invoke('app:getVersion'),
+  },
+  
   // Events
   onShortcutTriggered: (callback: () => void) => {
     ipcRenderer.on('shortcut:triggered', callback);
@@ -64,6 +69,9 @@ declare global {
       writeClipboard: (text: string) => Promise<void>;
       getHistory: () => Promise<any[]>;
       addHistory: (entry: any) => Promise<void>;
+      app: {
+        getVersion: () => Promise<string>;
+      };
       onShortcutTriggered: (callback: () => void) => () => void;
       onOptimizationComplete: (callback: (result: string) => void) => () => void;
       onProviderChange: (callback: (provider: Provider) => void) => () => void;

@@ -1,4 +1,6 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import path from 'path';
 import { createTray, updateTrayMenu, destroyTray } from './tray';
 import { registerGlobalShortcut, unregisterAllShortcuts } from './shortcuts';
@@ -278,4 +280,26 @@ ipcMain.handle('clipboard:write', (_event, text: string) => writeClipboard(text)
 // History
 ipcMain.handle('history:get', () => getHistory());
 ipcMain.handle('history:add', (_event, entry: any) => addHistory(entry));
+
+// App Info
+ipcMain.handle('app:getVersion', () => {
+  try {
+    const packagePath = join(__dirname, '../../package.json');
+    const packageJson = JSON.parse(readFileSync(packagePath, 'utf-8'));
+    return packageJson.version;
+  } catch (error) {
+    return '1.0.0'; // Fallback
+  }
+});
+
+// App Info
+ipcMain.handle('app:getVersion', () => {
+  try {
+    const packagePath = join(__dirname, '../../package.json');
+    const packageJson = JSON.parse(readFileSync(packagePath, 'utf-8'));
+    return packageJson.version;
+  } catch (error) {
+    return '1.0.0'; // Fallback
+  }
+});
 

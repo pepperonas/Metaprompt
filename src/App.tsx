@@ -8,15 +8,23 @@ import Settings from './pages/Settings';
 import History from './pages/History';
 import Header from './components/layout/Header';
 import StatusBar from './components/layout/StatusBar';
+import { AboutDialog } from './components/ui/AboutDialog';
 import type { Provider } from './types';
 
 type Page = 'dashboard' | 'metaprompts' | 'settings' | 'history';
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
+  const [showAbout, setShowAbout] = useState(false);
+  const [version, setVersion] = useState('1.0.0');
   const { loadSettings, settings } = useSettingsStore();
   const { loadApiKey } = useApiKeysStore();
   const { loadMetaprompts } = useMetapromptsStore();
+  
+  useEffect(() => {
+    // Lade Versionsnummer
+    window.mrp.app.getVersion().then(setVersion);
+  }, []);
 
   useEffect(() => {
     // Initial load
@@ -60,11 +68,12 @@ function App() {
 
   return (
     <div className="flex flex-col h-screen bg-bg-primary text-text-primary">
-      <Header currentPage={currentPage} onPageChange={setCurrentPage} />
+      <Header currentPage={currentPage} onPageChange={setCurrentPage} onAboutClick={() => setShowAbout(true)} />
       <main className="flex-1 overflow-auto">
         {renderPage()}
       </main>
       <StatusBar />
+      <AboutDialog isOpen={showAbout} onClose={() => setShowAbout(false)} version={version} />
     </div>
   );
 }

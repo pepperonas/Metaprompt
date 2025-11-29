@@ -6,6 +6,7 @@ import { Tabs } from '../components/ui/Tabs';
 import { ApiKeyForm } from '../components/features/ApiKeyForm';
 import { ShortcutInput } from '../components/features/ShortcutInput';
 import { useSettingsStore } from '../stores/useSettingsStore';
+import { formatShortcut } from '../utils/formatShortcut';
 import type { Provider } from '../types';
 
 const Settings: React.FC = () => {
@@ -114,7 +115,10 @@ const Settings: React.FC = () => {
           />
           <div className="mt-4 p-3 bg-bg-primary rounded-lg border border-bg-secondary">
             <p className="text-xs text-text-secondary mb-2">
-              <strong>Aktueller Shortcut:</strong> {localSettings.globalShortcut}
+              <strong>Aktueller Shortcut:</strong>{' '}
+              <span className="font-mono text-text-primary font-medium">
+                {formatShortcut(localSettings.globalShortcut)}
+              </span>
             </p>
             <p className="text-xs text-text-secondary">
               Dieser Shortcut wird global registriert und funktioniert auch wenn die App nicht im Fokus ist.

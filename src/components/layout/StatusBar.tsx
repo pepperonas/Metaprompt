@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSettingsStore } from '../../stores/useSettingsStore';
+import { formatShortcut } from '../../utils/formatShortcut';
 
 const StatusBar: React.FC = () => {
   const { settings } = useSettingsStore();
@@ -11,8 +12,13 @@ const StatusBar: React.FC = () => {
           <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
           Bereit
         </span>
-        {settings && (
-          <span>Shortcut: {settings.globalShortcut}</span>
+        {settings && settings.globalShortcut && (
+          <span>
+            Shortcut:{' '}
+            <span className="font-mono font-medium text-text-primary">
+              {formatShortcut(settings.globalShortcut)}
+            </span>
+          </span>
         )}
       </div>
       <span>v1.0.0</span>

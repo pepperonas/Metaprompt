@@ -5,6 +5,7 @@ import { Select } from '../components/ui/Select';
 import { useSettingsStore } from '../stores/useSettingsStore';
 import { useApiKeysStore } from '../stores/useApiKeysStore';
 import { useMetapromptsStore } from '../stores/useMetapromptsStore';
+import { formatShortcut } from '../utils/formatShortcut';
 import type { Provider } from '../types';
 
 const Dashboard: React.FC = () => {
@@ -200,7 +201,10 @@ const Dashboard: React.FC = () => {
             Prompt jetzt optimieren
           </Button>
           <p className="text-sm text-text-secondary">
-            Kopiere einen normalen Prompt in die Zwischenablage und klicke auf den Button, oder verwende den Shortcut: {settings?.globalShortcut}
+            Kopiere einen normalen Prompt in die Zwischenablage und klicke auf den Button, oder verwende den Shortcut:{' '}
+            <span className="font-mono text-text-primary font-medium">
+              {settings?.globalShortcut ? formatShortcut(settings.globalShortcut) : 'Nicht gesetzt'}
+            </span>
           </p>
           <p className="text-xs text-text-secondary mt-1">
             Der aktive Metaprompt wird verwendet, um deinen Prompt zu optimieren.

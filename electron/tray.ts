@@ -127,7 +127,7 @@ export const createTray = (mainWindow: BrowserWindow | null): void => {
   }
 
   tray = new Tray(icon);
-  tray.setToolTip('MRP - Meta Prompt Refiner');
+  tray.setToolTip('MRP - Prompt-Optimierer');
 
   // Menü aktualisieren
   const updateMenu = () => {
