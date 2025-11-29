@@ -10,6 +10,10 @@ files:
   - "dist-electron/**/*"
   - "dist/**/*"
   - "package.json"
+  
+# Erlaube LICENSE-Dateien für Universal Build
+asar:
+  smartUnpack: true
 
 # Windows - Portable
 win:
@@ -25,13 +29,17 @@ portable:
 mac:
   target:
     - target: dir
-      arch: [universal]
+      arch: [x64, arm64]
   icon: resources/icon.icns
   category: public.app-category.productivity
   extendInfo:
     CFBundleName: MRP
     CFBundleDisplayName: MRP
     CFBundleExecutable: MRP
+  # Erlaube LICENSE-Dateien
+  asarUnpack:
+    - "**/LICENSE"
+    - "**/LICENSE*"
 
 # Linux - AppImage
 linux:
