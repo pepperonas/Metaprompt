@@ -28,6 +28,14 @@ contextBridge.exposeInMainWorld('mrp', {
   getHistory: (): Promise<any[]> => ipcRenderer.invoke('history:get'),
   addHistory: (entry: any): Promise<void> => ipcRenderer.invoke('history:add', entry),
   
+  // Cost Tracking
+  getCostsLast30Days: (provider: Provider): Promise<{ provider: Provider; totalCost: number; requestCount: number; totalInputTokens: number; totalOutputTokens: number }> => 
+    ipcRenderer.invoke('costs:getLast30Days', provider),
+  
+  // Notifications
+  showNotification: (title: string, body: string, success?: boolean): Promise<void> => 
+    ipcRenderer.invoke('notification:show', title, body, success),
+  
   // App Info
   app: {
     getVersion: (): Promise<string> => ipcRenderer.invoke('app:getVersion'),
@@ -69,6 +77,8 @@ declare global {
       writeClipboard: (text: string) => Promise<void>;
       getHistory: () => Promise<any[]>;
       addHistory: (entry: any) => Promise<void>;
+      getCostsLast30Days: (provider: Provider) => Promise<{ provider: Provider; totalCost: number; requestCount: number; totalInputTokens: number; totalOutputTokens: number }>;
+      showNotification: (title: string, body: string, success?: boolean) => Promise<void>;
       app: {
         getVersion: () => Promise<string>;
       };

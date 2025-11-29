@@ -1,10 +1,12 @@
+import type { ApiResponse } from './openai';
+
 export const optimizeGemini = async (
   prompt: string,
   apiKey: string,
   model: string,
   maxTokens: number,
   temperature: number
-): Promise<string> => {
+): Promise<ApiResponse> => {
   // Gemini API verwendet einen anderen Endpoint-Format
   const modelName = model.includes('gemini') ? model : `models/${model}`;
   const url = `https://generativelanguage.googleapis.com/v1beta/${modelName}:generateContent?key=${apiKey}`;
@@ -37,6 +39,15 @@ export const optimizeGemini = async (
   }
 
   const data = await response.json();
-  return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+  const content = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+  const usage = data.usageMetadata;
+  
+  return {
+    content,
+    tokenUsage: usage ? {
+      inputTokens: usage.promptTokenCount || 0,
+      outputTokens: usage.candidatesTokenCount || 0,
+    } : undefined,
+  };
 };
 

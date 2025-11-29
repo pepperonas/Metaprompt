@@ -55,6 +55,11 @@ export interface ApiKeyStatus {
   isConfigured: boolean;
 }
 
+export interface TokenUsage {
+  inputTokens: number;
+  outputTokens: number;
+}
+
 export interface OptimizationHistory {
   id: string;
   originalPrompt: string;
@@ -65,6 +70,8 @@ export interface OptimizationHistory {
   timestamp: Date;
   success: boolean;
   error?: string;
+  tokenUsage?: TokenUsage;
+  cost?: number;
 }
 
 export const DEFAULT_MODELS: Record<Provider, string> = {

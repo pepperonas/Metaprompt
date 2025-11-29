@@ -3,6 +3,7 @@ import path from 'path';
 import { existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { getSettings, getMetaprompts } from './store';
+import { triggerOptimization } from './shortcuts';
 import type { Provider } from '../src/types';
 
 // Get __dirname for ES modules
@@ -79,10 +80,8 @@ const createTrayMenu = (mainWindow: BrowserWindow | null): Menu => {
     {
       label: `Prompt optimieren (${settings.globalShortcut})`,
       click: () => {
-        // Shortcut-Event simulieren
-        if (mainWindow && !mainWindow.isDestroyed()) {
-          mainWindow.webContents.send('shortcut:triggered');
-        }
+        // Optimierung direkt auslösen
+        triggerOptimization(mainWindow);
       },
     },
     { type: 'separator' },

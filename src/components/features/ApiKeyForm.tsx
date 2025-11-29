@@ -3,6 +3,7 @@ import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { useApiKeysStore } from '../../stores/useApiKeysStore';
+import { formatCost } from '../../utils/costCalculator';
 import type { Provider } from '../../types';
 
 const API_DASHBOARD_URLS: Record<Provider, string> = {
@@ -21,11 +22,35 @@ export const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ provider, providerName }
   const [key, setKey] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [costs, setCosts] = useState<{ totalCost: number; requestCount: number } | null>(null);
+  const [costsLoading, setCostsLoading] = useState(true);
   const { keys, setApiKey, validateApiKey, loadApiKey } = useApiKeysStore();
 
   React.useEffect(() => {
     loadApiKey(provider);
+    loadCosts();
   }, [provider]);
+
+  const loadCosts = async () => {
+    setCostsLoading(true);
+    try {
+      const costData = await window.mrp.getCostsLast30Days(provider);
+      console.log(`Costs for ${provider}:`, costData);
+      setCosts({
+        totalCost: costData.totalCost || 0,
+        requestCount: costData.requestCount || 0,
+      });
+    } catch (error) {
+      console.error('Failed to load costs:', error);
+      // Setze auf 0 bei Fehler, damit die Anzeige immer sichtbar ist
+      setCosts({
+        totalCost: 0,
+        requestCount: 0,
+      });
+    } finally {
+      setCostsLoading(false);
+    }
+  };
 
   React.useEffect(() => {
     // Nur setzen wenn Key vorhanden ist, sonst leer lassen
@@ -59,6 +84,8 @@ export const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ provider, providerName }
       await setApiKey(provider, key.trim());
       setError('');
       alert('API-Key erfolgreich gespeichert und validiert!');
+      // Kosten neu laden nach erfolgreichem Speichern
+      await loadCosts();
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Fehler beim Speichern';
       setError(`Validierungsfehler: ${errorMsg}`);
@@ -89,6 +116,21 @@ export const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ provider, providerName }
               Status: {isValid ? 'Gültig' : isConfigured ? 'Ungültig' : 'Nicht konfiguriert'}
             </span>
           </div>
+          {!costsLoading && costs !== null && (
+            <div className="text-sm text-text-secondary">
+              {costs.requestCount > 0 ? (
+                <>
+                  <span className="font-medium text-text-primary">{formatCost(costs.totalCost)}</span>
+                  <span className="ml-1">(letzte 30 Tage, {costs.requestCount} {costs.requestCount === 1 ? 'Anfrage' : 'Anfragen'})</span>
+                </>
+              ) : (
+                <span className="text-text-secondary">$0.00 (letzte 30 Tage)</span>
+              )}
+            </div>
+          )}
+          {costsLoading && (
+            <div className="text-sm text-text-secondary">Lade Kosten...</div>
+          )}
         </div>
         <Input
           type="password"

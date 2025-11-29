@@ -4,7 +4,27 @@
 
 **MRP (Prompt-Optimierer)** ist eine Desktop-Anwendung zur KI-gestützten Prompt-Optimierung mit Clipboard-Integration. Die App verwendet **Metaprompts** als Vorlagen, um normale Prompts zu optimieren.
 
-**Aktuelle Version:** 1.0.1
+**Aktuelle Version:** 1.0.3
+
+## Versionsnummerierung
+
+Die App verwendet **Semantische Versionierung** im Format `MAJOR.MINOR.PATCH`:
+
+- **MAJOR**: Hauptversion für größere Änderungen
+- **MINOR**: Nebenversion für neue Features
+- **PATCH**: Patch-Version für Bugfixes
+
+### Versionsrichtlinien
+
+- Nach **9 Patches** (z.B. 0.0.9) → Minor erhöhen (0.1.0)
+- Nach **9 Minors** (z.B. 0.9.x) → Major erhöhen (1.0.0)
+
+**Beispiele:**
+- `0.0.1` → `0.0.2` → ... → `0.0.9` → `0.1.0`
+- `0.1.0` → `0.2.0` → ... → `0.9.0` → `1.0.0`
+- `1.0.0` → `1.0.1` → ... → `1.0.9` → `1.1.0`
+- `1.1.0` → `1.1.1` → ... → `1.1.9` → `1.2.0`
+- `1.9.0` → `1.9.1` → ... → `1.9.9` → `2.0.0`
 
 ---
 

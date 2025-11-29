@@ -6,6 +6,48 @@ import { showNotification } from './notifications';
 import { BrowserWindow } from 'electron';
 import { updateTrayMenu } from './tray';
 
+// Zentrale Funktion zum Auslösen der Optimierung (wird von Shortcut und Tray verwendet)
+export const triggerOptimization = async (mainWindow: BrowserWindow | null): Promise<void> => {
+  try {
+    // Notification: Optimierung startet
+    showNotification('MRP', 'Optimierung gestartet...', true);
+    
+    const clipboardText = readClipboard();
+    
+    if (!clipboardText || clipboardText.trim().length === 0) {
+      showNotification('MRP', 'Zwischenablage ist leer', false);
+      return;
+    }
+
+    const settings = getSettings();
+    
+    // Optimierung durchführen
+    const result = await optimizePrompt({
+      userPrompt: clipboardText,
+      metaprompt: '', // Wird aus Store geladen
+      provider: settings.activeProvider,
+      model: settings.defaultModel[settings.activeProvider],
+      maxTokens: settings.maxTokens,
+      temperature: settings.temperature,
+    });
+
+    if (result.success && result.optimizedPrompt) {
+      writeClipboard(result.optimizedPrompt);
+      showNotification('MRP', 'Prompt erfolgreich optimiert', true);
+      
+      // Event an Renderer senden
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('optimization:complete', result.optimizedPrompt);
+      }
+    } else {
+      showNotification('MRP', `Fehler: ${result.error || 'Unbekannter Fehler'}`, false);
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unbekannter Fehler';
+    showNotification('MRP', `Fehler: ${message}`, false);
+  }
+};
+
 let currentShortcut: string | null = null;
 let currentNextShortcut: string | null = null;
 let currentPrevShortcut: string | null = null;
@@ -18,41 +60,7 @@ export const registerGlobalShortcut = (shortcut: string, mainWindow: BrowserWind
 
   // Neuen Shortcut registrieren
   const registered = globalShortcut.register(shortcut, async () => {
-    try {
-      const clipboardText = readClipboard();
-      
-      if (!clipboardText || clipboardText.trim().length === 0) {
-        showNotification('MRP', 'Zwischenablage ist leer', false);
-        return;
-      }
-
-      const settings = getSettings();
-      
-      // Optimierung durchführen
-      const result = await optimizePrompt({
-        userPrompt: clipboardText,
-        metaprompt: '', // Wird aus Store geladen
-        provider: settings.activeProvider,
-        model: settings.defaultModel[settings.activeProvider],
-        maxTokens: settings.maxTokens,
-        temperature: settings.temperature,
-      });
-
-      if (result.success && result.optimizedPrompt) {
-        writeClipboard(result.optimizedPrompt);
-        showNotification('MRP', 'Prompt erfolgreich optimiert', true);
-        
-        // Event an Renderer senden
-        if (mainWindow && !mainWindow.isDestroyed()) {
-          mainWindow.webContents.send('optimization:complete', result.optimizedPrompt);
-        }
-      } else {
-        showNotification('MRP', `Fehler: ${result.error || 'Unbekannter Fehler'}`, false);
-      }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unbekannter Fehler';
-      showNotification('MRP', `Fehler: ${message}`, false);
-    }
+    await triggerOptimization(mainWindow);
   });
 
   if (registered) {

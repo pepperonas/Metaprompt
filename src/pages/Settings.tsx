@@ -56,7 +56,9 @@ const Settings: React.FC = () => {
       <div>
         <h2 className="text-2xl font-bold text-text-primary mb-2">Einstellungen</h2>
         <p className="text-text-secondary">
-          Konfiguriere das Verhalten der Anwendung und verwalte deine API-Keys
+          {activeTab === 'api-keys' 
+            ? 'Konfiguriere deine API-Keys für die verschiedenen Anbieter. Die Keys werden verschlüsselt gespeichert.'
+            : 'Konfiguriere das Verhalten der Anwendung und verwalte deine API-Keys'}
         </p>
       </div>
 
@@ -179,13 +181,6 @@ const Settings: React.FC = () => {
 
       {activeTab === 'api-keys' && (
         <>
-          <Card>
-            <div className="mb-4">
-              <p className="text-sm text-text-secondary">
-                Konfiguriere deine API-Keys für die verschiedenen Anbieter. Die Keys werden verschlüsselt gespeichert.
-              </p>
-            </div>
-          </Card>
           {providers.map((provider) => (
             <ApiKeyForm 
               key={provider} 

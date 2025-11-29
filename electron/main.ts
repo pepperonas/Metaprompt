@@ -1,10 +1,12 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, Notification } from 'electron';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import path from 'path';
 import { createTray, updateTrayMenu, destroyTray } from './tray';
 import { registerGlobalShortcut, unregisterAllShortcuts, registerMetapromptShortcuts } from './shortcuts';
 import { getSettings, setSettings, getApiKey, setApiKey, getMetaprompts, saveMetaprompt, deleteMetaprompt, getHistory, addHistory } from './store';
+import { getCostsLast30Days } from './costTracking';
+import { calculateCost } from '../src/utils/costCalculator';
 import { readClipboard, writeClipboard } from './clipboard';
 import { optimizePrompt } from './optimizer';
 import { validateApiKeyDirect } from './validateApiKey';
@@ -260,12 +262,79 @@ ipcMain.handle('metaprompts:delete', (_event, id: string) => {
   updateTrayMenu(mainWindow);
 });
 
+// Notifications
+ipcMain.handle('notification:show', async (_event, title: string, body: string, success: boolean = true) => {
+  if (Notification.isSupported()) {
+    new Notification({
+      title,
+      body,
+      urgency: success ? 'normal' : 'critical',
+    }).show();
+  }
+});
+
 // Optimization
 ipcMain.handle('optimize', async (_event, request: any) => {
-  const result = await optimizePrompt(request);
+  console.log('[Main] Optimization IPC handler called:', {
+    provider: request.provider,
+    model: request.model,
+    userPromptLength: request.userPrompt?.length || 0,
+  });
+  
+  // Notification: Optimierung startet (immer beim Start)
+  if (Notification.isSupported()) {
+    new Notification({
+      title: 'MRP',
+      body: 'Optimierung gestartet...',
+      urgency: 'normal',
+    }).show();
+  }
+  
+  let result;
+  try {
+    result = await optimizePrompt(request);
+    console.log('[Main] Optimization completed:', {
+      success: result.success,
+      hasOptimizedPrompt: !!result.optimizedPrompt,
+      error: result.error,
+    });
+  } catch (error) {
+    console.error('[Main] Optimization error:', error);
+    result = {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unbekannter Fehler',
+    };
+  }
+  
+  // Notification: Optimierung abgeschlossen
+  if (Notification.isSupported()) {
+    if (result.success && result.optimizedPrompt) {
+      new Notification({
+        title: 'MRP',
+        body: 'Prompt erfolgreich optimiert!',
+        urgency: 'normal',
+      }).show();
+    } else {
+      new Notification({
+        title: 'MRP',
+        body: `Fehler: ${result.error || 'Unbekannter Fehler'}`,
+        urgency: 'critical',
+      }).show();
+    }
+  }
   
   // In History speichern
   if (result.success && result.optimizedPrompt) {
+    const tokenUsage = result.tokenUsage;
+    const cost = tokenUsage ? calculateCost(request.provider, request.model, tokenUsage) : undefined;
+    
+    console.log(`[Main] Saving optimization to history:`, {
+      provider: request.provider,
+      model: request.model,
+      tokenUsage,
+      cost,
+    });
+    
     addHistory({
       id: uuidv4(),
       originalPrompt: request.userPrompt,
@@ -275,6 +344,8 @@ ipcMain.handle('optimize', async (_event, request: any) => {
       metapromptId: getSettings().activeMetapromptId,
       timestamp: new Date(),
       success: true,
+      tokenUsage,
+      cost,
     });
   } else {
     addHistory({
@@ -300,6 +371,11 @@ ipcMain.handle('clipboard:write', (_event, text: string) => writeClipboard(text)
 // History
 ipcMain.handle('history:get', () => getHistory());
 ipcMain.handle('history:add', (_event, entry: any) => addHistory(entry));
+
+// Cost Tracking
+ipcMain.handle('costs:getLast30Days', (_event, provider: Provider) => {
+  return getCostsLast30Days(provider);
+});
 
 // App Info
 ipcMain.handle('app:getVersion', () => {

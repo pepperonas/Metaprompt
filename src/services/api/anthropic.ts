@@ -1,10 +1,12 @@
+import type { ApiResponse } from './openai';
+
 export const optimizeAnthropic = async (
   prompt: string,
   apiKey: string,
   model: string,
   maxTokens: number,
   temperature: number
-): Promise<string> => {
+): Promise<ApiResponse> => {
   // Stelle sicher, dass der API-Key nicht leer ist
   if (!apiKey || !apiKey.trim()) {
     throw new Error('API-Key ist leer');
@@ -72,9 +74,21 @@ export const optimizeAnthropic = async (
 
   const data = await response.json();
   // Anthropic gibt content als Array zurück
-  if (data.content && Array.isArray(data.content) && data.content.length > 0) {
-    return data.content[0]?.text?.trim() || '';
+  const content = data.content && Array.isArray(data.content) && data.content.length > 0
+    ? data.content[0]?.text?.trim() || ''
+    : '';
+  
+  if (!content) {
+    throw new Error('Ungültige Antwort von Anthropic API');
   }
   
-  throw new Error('Ungültige Antwort von Anthropic API');
+  const usage = data.usage;
+  
+  return {
+    content,
+    tokenUsage: usage ? {
+      inputTokens: usage.input_tokens || 0,
+      outputTokens: usage.output_tokens || 0,
+    } : undefined,
+  };
 };

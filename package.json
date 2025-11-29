@@ -1,6 +1,6 @@
 {
   "name": "mrp",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Prompt-Optimierer - AI-powered prompt optimization tool",
   "main": "dist-electron/main.js",
   "author": "Martin Pfeffer | celox.io",
@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "electron-store": "^10.0.0",
+    "node-fetch": "^2.7.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "uuid": "^10.0.0",

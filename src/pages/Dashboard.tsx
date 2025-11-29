@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Select } from '../components/ui/Select';
@@ -11,7 +11,7 @@ import type { Provider } from '../types';
 const Dashboard: React.FC = () => {
   const { settings, loadSettings } = useSettingsStore();
   const { keys, statuses, loadApiKey, checkStatus } = useApiKeysStore();
-  const { metaprompts, loadMetaprompts, setDefault } = useMetapromptsStore();
+  const { metaprompts, loadMetaprompts } = useMetapromptsStore();
 
   useEffect(() => {
     loadSettings();
@@ -32,16 +32,41 @@ const Dashboard: React.FC = () => {
                            metaprompts.find(m => m.isDefault) ||
                            metaprompts[0];
 
+  const [isOptimizing, setIsOptimizing] = useState(false);
+
   const handleOptimize = async () => {
     try {
+      setIsOptimizing(true);
+      
+      console.log('[Dashboard] Starting optimization...');
+      
+      // Notification: Optimierung startet
+      await window.mrp.showNotification('MRP', 'Optimierung gestartet...', true);
+      
       const clipboardText = await window.mrp.readClipboard();
+      console.log('[Dashboard] Clipboard text length:', clipboardText?.length || 0);
+      
       if (!clipboardText || clipboardText.trim().length === 0) {
-        alert('Zwischenablage ist leer');
+        console.warn('[Dashboard] Clipboard is empty');
+        await window.mrp.showNotification('MRP', 'Zwischenablage ist leer', false);
+        setIsOptimizing(false);
         return;
       }
 
-      if (!settings) return;
+      if (!settings) {
+        console.error('[Dashboard] Settings not loaded');
+        setIsOptimizing(false);
+        return;
+      }
 
+      console.log('[Dashboard] Optimization request:', {
+        provider: settings.activeProvider,
+        model: settings.defaultModel[settings.activeProvider],
+        activeMetapromptId: settings.activeMetapromptId,
+        activeMetapromptName: activeMetaprompt?.name,
+      });
+
+      // Optimierung über IPC im Main-Prozess durchführen (umgeht CORS-Probleme)
       const result = await window.mrp.optimize({
         userPrompt: clipboardText,
         metaprompt: activeMetaprompt?.content || '',
@@ -51,14 +76,28 @@ const Dashboard: React.FC = () => {
         temperature: settings.temperature,
       });
 
+      console.log('[Dashboard] Optimization result:', {
+        success: result.success,
+        hasOptimizedPrompt: !!result.optimizedPrompt,
+        error: result.error,
+      });
+
       if (result.success && result.optimizedPrompt) {
         await window.mrp.writeClipboard(result.optimizedPrompt);
-        alert('Prompt erfolgreich optimiert und in Zwischenablage kopiert!');
+        await window.mrp.showNotification('MRP', 'Prompt erfolgreich optimiert und in Zwischenablage kopiert!', true);
       } else {
-        alert(`Fehler: ${result.error || 'Unbekannter Fehler'}`);
+        const errorMsg = result.error || 'Unbekannter Fehler';
+        console.error('[Dashboard] Optimization failed:', errorMsg);
+        await window.mrp.showNotification('MRP', `Fehler: ${errorMsg}`, false);
+        alert(`Fehler bei der Optimierung: ${errorMsg}`);
       }
     } catch (error) {
-      alert(`Fehler: ${error instanceof Error ? error.message : 'Unbekannter Fehler'}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unbekannter Fehler';
+      console.error('[Dashboard] Exception during optimization:', error);
+      await window.mrp.showNotification('MRP', `Fehler: ${errorMessage}`, false);
+      alert(`Fehler: ${errorMessage}`);
+    } finally {
+      setIsOptimizing(false);
     }
   };
 
@@ -197,8 +236,8 @@ const Dashboard: React.FC = () => {
 
       <Card title="Quick Actions">
         <div className="space-y-4">
-          <Button onClick={handleOptimize} className="w-full" size="lg">
-            Prompt jetzt optimieren
+          <Button onClick={handleOptimize} className="w-full" size="lg" disabled={isOptimizing}>
+            {isOptimizing ? 'Optimierung läuft...' : 'Prompt jetzt optimieren'}
           </Button>
           <p className="text-sm text-text-secondary">
             Kopiere einen normalen Prompt in die Zwischenablage und klicke auf den Button, oder verwende den Shortcut:{' '}

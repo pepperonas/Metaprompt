@@ -1,10 +1,12 @@
+import type { ApiResponse } from './openai';
+
 export const optimizeGrok = async (
   prompt: string,
   apiKey: string,
   model: string,
   maxTokens: number,
   temperature: number
-): Promise<string> => {
+): Promise<ApiResponse> => {
   const response = await fetch('https://api.x.ai/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -30,6 +32,15 @@ export const optimizeGrok = async (
   }
 
   const data = await response.json();
-  return data.choices[0]?.message?.content?.trim() || '';
+  const content = data.choices[0]?.message?.content?.trim() || '';
+  const usage = data.usage;
+  
+  return {
+    content,
+    tokenUsage: usage ? {
+      inputTokens: usage.prompt_tokens || 0,
+      outputTokens: usage.completion_tokens || 0,
+    } : undefined,
+  };
 };
 

@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.3] - 2025-01-29
+
+### Behoben
+- **Prompt-Optimierung**: API-Calls laufen jetzt korrekt im Main-Prozess (kein CORS-Problem mehr)
+- **Metaprompt-Verarbeitung**: Platzhalter `{user_prompt}` wird jetzt korrekt durch den User-Prompt ersetzt
+- **Notification beim Start**: System-Notification erscheint jetzt sofort beim Start der Optimierung
+- **Tray-Menü**: Optimierung funktioniert jetzt korrekt über das Tray-Menü
+- **Shortcut**: Optimierung funktioniert jetzt korrekt über den globalen Shortcut
+- **Debug-Logs**: Umfangreiche Debug-Logs hinzugefügt für besseres Troubleshooting
+
+### Verbessert
+- **API-Services**: Direkte Implementierung im Main-Prozess für alle Provider (OpenAI, Anthropic, Grok, Gemini)
+- **Fehlerbehandlung**: Verbesserte Fehlerbehandlung und Fehlermeldungen
+- **Content-Extraktion**: Robustere Content-Extraktion aus API-Antworten
+
 ## [1.0.2] - 2025-11-29
 
 ### Behoben
