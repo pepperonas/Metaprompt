@@ -3,7 +3,7 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import path from 'path';
 import { createTray, updateTrayMenu, destroyTray } from './tray';
-import { registerGlobalShortcut, unregisterAllShortcuts } from './shortcuts';
+import { registerGlobalShortcut, unregisterAllShortcuts, registerMetapromptShortcuts } from './shortcuts';
 import { getSettings, setSettings, getApiKey, setApiKey, getMetaprompts, saveMetaprompt, deleteMetaprompt, getHistory, addHistory } from './store';
 import { readClipboard, writeClipboard } from './clipboard';
 import { optimizePrompt } from './optimizer';
@@ -79,9 +79,10 @@ const createWindow = (): void => {
   // Tray erstellen
   createTray(mainWindow);
 
-  // Global Shortcut registrieren
+  // Global Shortcuts registrieren
   const settings = getSettings();
   registerGlobalShortcut(settings.globalShortcut, mainWindow);
+  registerMetapromptShortcuts(mainWindow);
 };
 
 app.whenReady().then(() => {
@@ -196,9 +197,12 @@ ipcMain.handle('settings:set', (_event, settings: Partial<Settings>) => {
   setSettings(settings);
   updateTrayMenu(mainWindow);
   
-  // Shortcut neu registrieren falls geändert
-  if (settings.globalShortcut) {
+  // Shortcuts neu registrieren falls geändert
+  if (settings.globalShortcut !== undefined) {
     registerGlobalShortcut(settings.globalShortcut, mainWindow);
+  }
+  if (settings.metapromptNextShortcut !== undefined || settings.metapromptPrevShortcut !== undefined) {
+    registerMetapromptShortcuts(mainWindow);
   }
 });
 

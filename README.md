@@ -9,13 +9,15 @@ MRP verwendet **Metaprompts** als Vorlagen, um normale Prompts zu optimieren. Ei
 ## Features
 
 - ✅ Unterstützung für 4 AI-Anbieter: OpenAI, Anthropic (Claude), xAI (Grok), Google (Gemini)
-- ✅ Sichere API-Key-Verwaltung (verschlüsselt)
+- ✅ Sichere API-Key-Verwaltung (verschlüsselt) mit visueller Status-Anzeige
 - ✅ Metaprompt-Verwaltung: Erstelle, bearbeite und aktiviere Metaprompt-Vorlagen
+- ✅ **7 vorgefertigte Metaprompts**: Software-Entwicklung, Kommunikation, Datenanalyse, Rechtssprechung, Business, Bildgenerierung, Bildbearbeitung
 - ✅ **KI-generierte Metaprompts**: Lass die KI Metaprompts für dich erstellen
-- ✅ Global Shortcut für schnelle Optimierung (Standard: Ctrl+Shift+M)
-- ✅ System Tray Integration
+- ✅ Global Shortcut für schnelle Optimierung (Standard: Ctrl+Shift+O / Cmd+Shift+O)
+- ✅ System Tray Integration mit App-Icon
 - ✅ Clipboard-Workflow: Prompt kopieren → Shortcut drücken → Optimiertes Ergebnis in Zwischenablage
 - ✅ History der letzten 20 Optimierungen
+- ✅ Dunkles Theme mit modernem Design
 - ✅ Portable Builds für Windows, macOS und Linux
 
 ## Entwicklung
@@ -58,30 +60,38 @@ Die Builds werden im `dist/` Verzeichnis erstellt.
 ## Verwendung
 
 ### 1. API-Keys konfigurieren
-Gehe zu "API-Keys" und trage deine Keys für die gewünschten Anbieter ein.
+Gehe zu "Einstellungen" → "API-Keys" und trage deine Keys für die gewünschten Anbieter ein. Alle 4 Provider werden untereinander angezeigt, jeder mit eigenem Eingabefeld und Status-Anzeige.
 
 ### 2. Metaprompts einrichten
 Metaprompts sind Vorlagen, die definieren, wie Prompts optimiert werden sollen:
 
-- **Vorhandene Metaprompts verwenden**: Ein Standard-Metaprompt wird beim ersten Start erstellt
+- **Vorgefertigte Metaprompts**: 7 professionelle Metaprompts werden beim ersten Start automatisch erstellt:
+  - Standard Optimizer (kann nicht gelöscht werden)
+  - Software-Entwicklung
+  - Kommunikation
+  - Datenanalyse
+  - Rechtssprechung
+  - Business
+  - Bildgenerierung
+  - Bildbearbeitung
 - **Neue Metaprompts erstellen**: 
-  - Manuell: Erstelle eigene Metaprompts mit dem Editor
-  - **KI-generiert**: Lass die KI ein Metaprompt für einen bestimmten Anwendungsfall erstellen
-- **Metaprompts aktivieren**: Wähle einen Metaprompt aus und klicke auf "Aktivieren"
+  - **KI-generiert**: Beschreibe einen Anwendungsfall (z.B. "Code-Generierung") und lass die KI ein Metaprompt erstellen
+  - **Manuell**: Erstelle eigene Metaprompts mit dem Editor
+- **Metaprompts aktivieren**: Wähle einen Metaprompt im Dashboard per Dropdown aus
 
 ### 3. Prompt optimieren
 1. Kopiere einen normalen Prompt in die Zwischenablage
-2. Drücke `Ctrl+Shift+M` (oder `Cmd+Shift+M` auf macOS)
+2. Drücke `Ctrl+Shift+O` (oder `Cmd+Shift+O` auf macOS)
 3. Der aktive Metaprompt wird verwendet, um deinen Prompt zu optimieren
 4. Das optimierte Ergebnis wird automatisch in die Zwischenablage kopiert
 5. Füge es mit `Ctrl+V` ein
 
 ### Beispiel-Workflow
 - **Szenario**: Du möchtest Code-Prompts optimieren
-- Erstelle oder aktiviere einen Metaprompt für "Code-Generierung"
+- Wähle den Metaprompt "Software-Entwicklung" im Dashboard aus
 - Kopiere einen Code-Prompt → Shortcut → Erhalte optimierten Prompt
 - **Szenario**: Du möchtest kreative Texte verbessern
-- Aktiviere einen anderen Metaprompt für "Kreatives Schreiben"
+- Wähle den Metaprompt "Kommunikation" im Dashboard aus
 - Kopiere einen Text-Prompt → Shortcut → Erhalte optimierten Prompt
 
 ## Projektstruktur
@@ -94,9 +104,15 @@ mrp/
 │   ├── pages/        # Seiten
 │   ├── stores/       # Zustand Stores
 │   ├── services/     # API Services
-│   └── types/        # TypeScript Typen
+│   ├── types/        # TypeScript Typen
+│   └── utils/        # Utility-Funktionen
 ├── resources/        # Icons & Assets
-└── dist/             # Build Output
+│   ├── icons/        # Icon-Assets (SVG, PNG in verschiedenen Größen)
+│   ├── icon.ico      # Windows Icon
+│   ├── icon.icns     # macOS Icon
+│   └── icon.png      # Linux Icon
+├── dist/             # Build Output
+└── dist-electron/    # Electron Build Output
 ```
 
 ## Technologie-Stack

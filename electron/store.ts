@@ -13,7 +13,10 @@ const store = new Store<{
       launchAtStartup: false,
       minimizeToTray: true,
       showNotifications: true,
-      globalShortcut: 'CommandOrControl+Shift+M',
+      showOnboarding: true,  // Standardmäßig beim ersten Start anzeigen
+      globalShortcut: 'CommandOrControl+Shift+O',
+      metapromptNextShortcut: '',  // Optional: Standardmäßig nicht gesetzt
+      metapromptPrevShortcut: '',  // Optional: Standardmäßig nicht gesetzt
       activeProvider: 'openai',
       defaultModel: {
         openai: 'gpt-4o',
@@ -37,7 +40,21 @@ const apiKeyStore = new Store<Record<Provider, string>>({
 });
 
 export const getSettings = (): Settings => {
-  return store.get('settings') as Settings;
+  const currentSettings = store.get('settings') as Settings;
+  
+  // Migration: Aktualisiere alten Shortcut auf neuen Standard
+  if (currentSettings.globalShortcut === 'CommandOrControl+Shift+M') {
+    currentSettings.globalShortcut = 'CommandOrControl+Shift+O';
+    store.set('settings', currentSettings);
+  }
+  
+  // Migration: Stelle sicher, dass showOnboarding existiert (für bestehende Nutzer)
+  if (currentSettings.showOnboarding === undefined) {
+    currentSettings.showOnboarding = true;
+    store.set('settings', currentSettings);
+  }
+  
+  return currentSettings;
 };
 
 export const setSettings = (settings: Partial<Settings>): void => {

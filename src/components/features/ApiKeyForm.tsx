@@ -5,6 +5,13 @@ import { Card } from '../ui/Card';
 import { useApiKeysStore } from '../../stores/useApiKeysStore';
 import type { Provider } from '../../types';
 
+const API_DASHBOARD_URLS: Record<Provider, string> = {
+  openai: 'https://platform.openai.com/api-keys',
+  anthropic: 'https://console.anthropic.com/settings/keys',
+  grok: 'https://console.x.ai/',
+  gemini: 'https://aistudio.google.com/app/apikey',
+};
+
 interface ApiKeyFormProps {
   provider: Provider;
   providerName: string;
@@ -91,6 +98,20 @@ export const ApiKeyForm: React.FC<ApiKeyFormProps> = ({ provider, providerName }
           placeholder={keys[provider] ? `${providerName} API-Key eingeben...` : "API-Key eingeben"}
           error={error}
         />
+        <div className="pt-2 pb-1">
+          <a
+            href={API_DASHBOARD_URLS[provider]}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-brand hover:text-brand/80 transition-colors flex items-center space-x-2 text-sm group"
+          >
+            <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+            <span className="font-medium">API-Dashboard öffnen</span>
+            <span className="text-text-secondary text-xs">(API-Key erstellen oder verwalten)</span>
+          </a>
+        </div>
         <Button
           onClick={handleSave}
           disabled={loading || !key.trim()}

@@ -15,9 +15,12 @@ export interface Settings {
   launchAtStartup: boolean;
   minimizeToTray: boolean;
   showNotifications: boolean;
+  showOnboarding: boolean;  // Zeigt Onboarding-Dialog beim Start
   
   // Shortcut
   globalShortcut: string;
+  metapromptNextShortcut: string;  // Optional: Shortcut zum nächsten Metaprompt
+  metapromptPrevShortcut: string;  // Optional: Shortcut zum vorherigen Metaprompt
   
   // API-Verhalten
   activeProvider: Provider;

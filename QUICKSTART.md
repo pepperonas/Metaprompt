@@ -18,22 +18,31 @@
 
 1. Öffne die App (sie startet im System Tray)
 2. Klicke auf das Tray-Icon, um das Hauptfenster zu öffnen
-3. Gehe zu "API-Keys"
-4. Wähle einen Anbieter (z.B. OpenAI)
-5. Trage deinen API-Key ein
+3. Gehe zu "Einstellungen" → "API-Keys"
+4. Alle 4 Provider werden untereinander angezeigt
+5. Trage deinen API-Key für den gewünschten Anbieter ein
 6. Klicke auf "Speichern & Validieren"
+7. Der Status wird durch einen farbigen Punkt angezeigt (🟢 grün = gültig, 🔴 rot = ungültig, ⚪ grau = nicht konfiguriert)
 
 ### 2. Metaprompts einrichten
 
 Metaprompts sind **Vorlagen**, die definieren, wie normale Prompts optimiert werden sollen:
 
-- **Standard-Metaprompt**: Wird automatisch beim ersten Start erstellt
+- **Vorgefertigte Metaprompts**: 7 professionelle Metaprompts werden beim ersten Start automatisch erstellt:
+  - Standard Optimizer (kann nicht gelöscht werden)
+  - Software-Entwicklung
+  - Kommunikation
+  - Datenanalyse
+  - Rechtssprechung
+  - Business
+  - Bildgenerierung
+  - Bildbearbeitung
 - **Neue Metaprompts erstellen**:
   - **Mit KI generieren**: Beschreibe einen Anwendungsfall (z.B. "Code-Generierung", "Kreatives Schreiben") und lass die KI eine passende Vorlage erstellen
   - **Manuell erstellen**: Erstelle eigene Metaprompts mit dem Editor
-- **Metaprompts aktivieren**: Wähle einen Metaprompt aus und klicke auf "Aktivieren"
+- **Metaprompts aktivieren**: Wähle einen Metaprompt im Dashboard per Dropdown aus
 
-**Tipp**: Erstelle mehrere Metaprompts für verschiedene Anwendungsfälle und aktiviere sie nach Bedarf.
+**Tipp**: Erstelle mehrere Metaprompts für verschiedene Anwendungsfälle und wechsle sie im Dashboard nach Bedarf.
 
 ### 3. Prompt optimieren
 
@@ -41,7 +50,7 @@ Der aktive Metaprompt wird als Vorlage verwendet, um deinen normalen Prompt zu o
 
 **Methode 1: Global Shortcut**
 1. Kopiere einen normalen Prompt in die Zwischenablage
-2. Drücke `Ctrl+Shift+M` (oder `Cmd+Shift+M` auf macOS)
+2. Drücke `Ctrl+Shift+O` (oder `Cmd+Shift+O` auf macOS)
 3. Der aktive Metaprompt wird verwendet, um deinen Prompt zu optimieren
 4. Das optimierte Ergebnis wird automatisch in die Zwischenablage kopiert
 5. Füge es mit `Ctrl+V` ein
@@ -90,8 +99,9 @@ Die Builds werden im `dist/` Verzeichnis erstellt.
 - Teste den Key direkt in der API-Dokumentation
 
 ### Metaprompt wird nicht verwendet
-- Stelle sicher, dass ein Metaprompt als "Aktiv" markiert ist
-- Prüfe in den Einstellungen, ob die richtige Metaprompt-ID gesetzt ist
+- Stelle sicher, dass ein Metaprompt im Dashboard ausgewählt ist
+- Prüfe im Dashboard, ob der richtige Metaprompt im Dropdown ausgewählt ist
+- Der aktive Metaprompt wird im Metaprompts-Tab mit blauem Rahmen hervorgehoben
 
 ## Nächste Schritte
 

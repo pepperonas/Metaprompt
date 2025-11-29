@@ -1,8 +1,10 @@
-# MRP (Meta Prompt Refiner) – Vollständige Entwicklungsspezifikation
+# MRP (Prompt-Optimierer) – Vollständige Entwicklungsspezifikation
 
 ## Projektübersicht
 
-Entwickle eine Desktop-Anwendung namens **"MRP" (Meta Prompt Refiner)** – ein Hintergrund-Tool zur KI-gestützten Prompt-Optimierung mit Clipboard-Integration.
+**MRP (Prompt-Optimierer)** ist eine Desktop-Anwendung zur KI-gestützten Prompt-Optimierung mit Clipboard-Integration. Die App verwendet **Metaprompts** als Vorlagen, um normale Prompts zu optimieren.
+
+**Aktuelle Version:** 1.0.1
 
 ---
 
@@ -25,7 +27,7 @@ Entwickle eine Desktop-Anwendung namens **"MRP" (Meta Prompt Refiner)** – ein 
 ### Anforderungen
 
 - **Windows**: Portable .exe (kein Installer, kein Admin erforderlich)
-- **macOS**: .app Bundle (Intel + Apple Silicon Universal Binary)
+- **macOS**: .app Bundle (Apple Silicon arm64, Universal Binary möglich)
 - **Linux**: AppImage (portable, keine Installation)
 
 ### Kritische Constraints
@@ -52,8 +54,12 @@ Unterstützte Anbieter:
 **Funktionen:**
 - Sichere Speicherung aller API-Keys (verschlüsselt mit electron-safeStorage)
 - Validierung der API-Keys beim Speichern (Test-Request)
-- Visueller Status pro Anbieter (✓ aktiv / ✗ ungültig / ○ nicht konfiguriert)
-- Ein Anbieter als "Aktiv" auswählbar (Radio-Selection)
+- Visueller Status pro Anbieter mit farbigen Indikatoren:
+  - 🟢 Grün: Gültiger API-Key
+  - 🔴 Rot: Ungültiger API-Key
+  - ⚪ Grau: Nicht konfiguriert
+- Alle 4 Provider werden untereinander im Einstellungen-Tab angezeigt (keine Tabs mehr)
+- Ein Anbieter als "Aktiv" auswählbar (im Dashboard unter "Provider Status")
 
 ### 2. Metaprompt-Verwaltung
 
@@ -72,10 +78,19 @@ interface Metaprompt {
 
 **Funktionen:**
 - CRUD-Operationen für Metaprompts
-- Import/Export als JSON
-- Ein Metaprompt als "Standard" markierbar
-- KI-gestützte Optimierung eines Metaprompts (mit aktivem Anbieter)
-- Versionierung/History (letzte 5 Versionen pro Metaprompt)
+- **7 vorgefertigte Metaprompts** werden beim ersten Start automatisch erstellt:
+  - Standard Optimizer (kann nicht gelöscht werden)
+  - Software-Entwicklung
+  - Kommunikation
+  - Datenanalyse
+  - Rechtssprechung
+  - Business
+  - Bildgenerierung
+  - Bildbearbeitung
+- KI-generierte Metaprompts: Lass die KI Metaprompts für einen bestimmten Anwendungsfall erstellen
+- Ein Metaprompt als "Standard" markierbar (nur der Standard Optimizer kann Standard sein)
+- Standard-Metaprompt kann nicht gelöscht oder bearbeitet werden
+- Metaprompts werden im Dashboard per Dropdown ausgewählt
 
 ### 3. System Tray Integration
 
@@ -91,8 +106,13 @@ MRP
 │   └── ○ Gemini
 ├── Aktiver Metaprompt ►
 │   ├── ● Standard Optimizer
-│   ├── ○ Code Review
-│   └── ○ Creative Writing
+│   ├── ○ Software-Entwicklung
+│   ├── ○ Kommunikation
+│   ├── ○ Datenanalyse
+│   ├── ○ Rechtssprechung
+│   ├── ○ Business
+│   ├── ○ Bildgenerierung
+│   └── ○ Bildbearbeitung
 ├── ─────────────────
 ├── Einstellungen
 ├── ─────────────────
@@ -101,13 +121,14 @@ MRP
 
 **Verhalten:**
 - App startet minimiert im System Tray
-- Linksklick auf Tray-Icon → Hauptfenster öffnen
+- Tray-Icon zeigt das App-Logo (16x16 Pixel)
+- Linksklick auf Tray-Icon → Hauptfenster öffnen/schließen (Toggle)
 - Rechtsklick → Kontextmenü
-- Fenster schließen → Minimiert in Tray (nicht beenden)
+- Fenster schließen → Minimiert in Tray (nicht beenden, wenn `minimizeToTray` aktiviert)
 
 ### 4. Global Shortcut & Workflow
 
-**Standard-Shortcut:** `Ctrl+Shift+M` (konfigurierbar)
+**Standard-Shortcut:** `Ctrl+Shift+O` (konfigurierbar)
 
 **Workflow bei Shortcut-Aktivierung:**
 
@@ -136,7 +157,7 @@ interface Settings {
   showNotifications: boolean;         // System-Benachrichtigungen
   
   // Shortcut
-  globalShortcut: string;             // z.B. "CommandOrControl+Shift+M"
+  globalShortcut: string;             // z.B. "CommandOrControl+Shift+O"
   
   // API-Verhalten
   activeProvider: Provider;           // Aktuell ausgewählter Anbieter
@@ -184,9 +205,9 @@ interface Settings {
 │  ○ ○ ○                        MRP                       ─ □ x │
 ├──────────────────────────────────────────────────────────────┤
 │                                                              │
-│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐            │
-│  │ OpenAI  │ │ Claude  │ │  Grok   │ │ Gemini  │   [Tabs]   │
-│  └─────────┘ └─────────┘ └─────────┘ └─────────┘            │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │ Dashboard | Metaprompts | Einstellungen | Verlauf     │  │
+│  └────────────────────────────────────────────────────────┘  │
 │                                                              │
 │  ┌────────────────────────────────────────────────────────┐  │
 │  │                                                        │  │
@@ -195,18 +216,17 @@ interface Settings {
 │  └────────────────────────────────────────────────────────┘  │
 │                                                              │
 │  ┌──────────────────────────────────────────────────────────┐│
-│  │ Status: ● Bereit  |  Shortcut: Ctrl+Shift+M  |  v1.0.0  ││
+│  │ Status: ● Bereit  |  Shortcut: Ctrl+Shift+O  |  v1.0.1  ││
 │  └──────────────────────────────────────────────────────────┘│
 └──────────────────────────────────────────────────────────────┘
 ```
 
 ### Screens
 
-1. **Dashboard** – Übersicht aller Provider, Quick-Actions
-2. **API-Keys** – Eingabe und Validierung der Keys
-3. **Metaprompts** – Liste, Editor, Import/Export
-4. **Einstellungen** – Allgemeine Konfiguration
-5. **History** – Letzte Optimierungen mit Vorher/Nachher
+1. **Dashboard** – Übersicht aller Provider, aktiver Metaprompt (Dropdown-Auswahl), Quick-Actions
+2. **Metaprompts** – Liste aller Metaprompts, Editor, KI-Generator (aktiver Metaprompt wird hervorgehoben)
+3. **Einstellungen** – Allgemeine Konfiguration, API-Keys (alle Provider untereinander), Shortcut-Einstellungen
+4. **History** – Letzte Optimierungen mit Vorher/Nachher
 
 ---
 
@@ -237,12 +257,26 @@ Du bist ein Experte für Prompt Engineering. Deine Aufgabe ist es, den folgenden
 4. Entferne Mehrdeutigkeiten
 5. Strukturiere komplexe Anfragen in Schritte
 
-## Eingabe-Prompt:
+## Zu optimierender Prompt:
 {user_prompt}
 
 ## Aufgabe:
 Gib NUR den optimierten Prompt zurück, ohne Erklärungen oder Kommentare.
 ```
+
+### Vorgefertigte Metaprompts
+
+Beim ersten Start werden zusätzlich 7 professionelle Metaprompts automatisch erstellt:
+
+- **Software-Entwicklung**: Optimiert Prompts für Code-Generierung, Debugging und Software-Architektur
+- **Kommunikation**: Optimiert Prompts für E-Mails, Präsentationen, Berichte und professionelle Kommunikation
+- **Datenanalyse**: Optimiert Prompts für Datenanalyse, Statistik, Visualisierung und Insights
+- **Rechtssprechung**: Optimiert Prompts für juristische Texte, Verträge, Compliance und Rechtsanalyse
+- **Business**: Optimiert Prompts für Geschäftsstrategie, Marketing, Management und Business-Analyse
+- **Bildgenerierung**: Optimiert Prompts für KI-Bildgenerierung (DALL-E, Midjourney, Stable Diffusion)
+- **Bildbearbeitung**: Optimiert Prompts für Bildbearbeitung, Retusche, Compositing und visuelle Effekte
+
+Diese Metaprompts können bearbeitet und gelöscht werden (außer dem Standard Optimizer).
 
 ### Error Handling
 
@@ -323,9 +357,14 @@ mrp/
 │       └── globals.css         # Tailwind + Custom Styles
 │
 ├── resources/
-│   ├── icon.png                # App Icon (1024x1024)
-│   ├── icon.ico                # Windows Icon
-│   └── icon.icns               # macOS Icon
+│   ├── icon.png                # App Icon (512x512 für Linux)
+│   ├── icon.ico                # Windows Icon (16, 32, 48, 256px)
+│   ├── icon.icns               # macOS Icon (verschiedene Größen)
+│   └── icons/                  # Icon-Assets
+│       ├── icon.svg            # Vektor-Basis
+│       ├── icon-16.png         # 16x16px (für Tray)
+│       ├── icon-32.png         # 32x32px
+│       └── ...                 # Weitere Größen (48, 64, 128, 256, 512, 1024px)
 │
 ├── package.json
 ├── electron-builder.yml        # Build Configuration
@@ -364,11 +403,11 @@ win:
 portable:
   artifactName: "MRP-${version}-Windows-Portable.exe"
 
-# macOS - Universal Binary
+# macOS - DMG
 mac:
   target:
-    - target: dir
-      arch: [universal]
+    - target: dmg
+      arch: [arm64]
   icon: resources/icon.icns
   category: public.app-category.productivity
 

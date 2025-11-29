@@ -14,7 +14,7 @@ MRP ist ein Desktop-Tool, das:
 - **Metaprompts** als Vorlagen verwendet, um normale Prompts zu verbessern
 - **Clipboard-Integration** bietet: Prompt kopieren → Shortcut drücken → Optimiertes Ergebnis zurück
 - **System Tray Integration** für Hintergrund-Betrieb
-- **Global Shortcut** (Ctrl+Shift+M) für schnelle Optimierung
+- **Global Shortcut** (Ctrl+Shift+O) für schnelle Optimierung
 
 **Kernkonzept:** Ein Tool, das Texte/Prompts transformiert und verbessert - wie ein "Refiner" oder "Optimizer" für Prompts.
 

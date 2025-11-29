@@ -9,6 +9,7 @@ import History from './pages/History';
 import Header from './components/layout/Header';
 import StatusBar from './components/layout/StatusBar';
 import { AboutDialog } from './components/ui/AboutDialog';
+import { OnboardingDialog } from './components/ui/OnboardingDialog';
 import type { Provider } from './types';
 
 type Page = 'dashboard' | 'metaprompts' | 'settings' | 'history';
@@ -16,8 +17,9 @@ type Page = 'dashboard' | 'metaprompts' | 'settings' | 'history';
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
   const [showAbout, setShowAbout] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [version, setVersion] = useState('1.0.0');
-  const { loadSettings, settings } = useSettingsStore();
+  const { loadSettings, settings, updateSettings } = useSettingsStore();
   const { loadApiKey } = useApiKeysStore();
   const { loadMetaprompts } = useMetapromptsStore();
   
@@ -51,6 +53,27 @@ function App() {
     };
   }, []);
 
+  // Zeige Onboarding-Dialog beim ersten Start
+  useEffect(() => {
+    if (settings) {
+      // Zeige Onboarding wenn explizit true
+      if (settings.showOnboarding === true) {
+        // Kleine Verzögerung, damit die App vollständig geladen ist
+        const timer = setTimeout(() => {
+          setShowOnboarding(true);
+        }, 500);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [settings]);
+
+  const handleOnboardingClose = async (dontShowAgain: boolean) => {
+    setShowOnboarding(false);
+    if (dontShowAgain) {
+      await updateSettings({ showOnboarding: false });
+    }
+  };
+
   const renderPage = () => {
     switch (currentPage) {
       case 'dashboard':
@@ -74,6 +97,7 @@ function App() {
       </main>
       <StatusBar />
       <AboutDialog isOpen={showAbout} onClose={() => setShowAbout(false)} version={version} />
+      <OnboardingDialog isOpen={showOnboarding} onClose={handleOnboardingClose} />
     </div>
   );
 }

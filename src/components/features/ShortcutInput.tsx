@@ -4,12 +4,14 @@ interface ShortcutInputProps {
   value: string;
   onChange: (shortcut: string) => void;
   label?: string;
+  placeholder?: string;
 }
 
 export const ShortcutInput: React.FC<ShortcutInputProps> = ({
   value,
   onChange,
   label = 'Globaler Shortcut',
+  placeholder = 'Klicken zum Aufnehmen',
 }) => {
   const [displayValue, setDisplayValue] = useState('');
   const [isRecording, setIsRecording] = useState(false);
@@ -79,6 +81,13 @@ export const ShortcutInput: React.FC<ShortcutInputProps> = ({
         }
       }
       
+      // Erlaube auch Escape zum Leeren
+      if (key === 'Escape') {
+        onChange('');
+        setIsRecording(false);
+        return;
+      }
+      
       if (parts.length >= 2) { // Mindestens Modifier + Taste
         const shortcut = parts.join('+');
         onChange(shortcut);
@@ -141,7 +150,7 @@ export const ShortcutInput: React.FC<ShortcutInputProps> = ({
           ) : (
             <div className="flex items-center justify-between">
               <span className={displayValue ? 'font-mono text-sm' : 'text-text-secondary'}>
-                {displayValue || 'Klicken zum Aufnehmen'}
+                {displayValue || placeholder}
               </span>
               <svg className="w-5 h-5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />

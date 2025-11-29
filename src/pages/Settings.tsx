@@ -121,6 +121,34 @@ const Settings: React.FC = () => {
         </div>
       </Card>
 
+      <Card title="Metaprompt-Wechsel Shortcuts">
+        <div className="space-y-4">
+          <p className="text-sm text-text-secondary mb-4">
+            Optional: Lege Shortcuts fest, um schnell zwischen Metaprompt-Vorlagen zu wechseln.
+          </p>
+          <ShortcutInput
+            label="Nächste Vorlage"
+            value={localSettings.metapromptNextShortcut || ''}
+            onChange={(shortcut) => handleChange('metapromptNextShortcut', shortcut)}
+            placeholder="Nicht gesetzt"
+          />
+          <ShortcutInput
+            label="Vorherige Vorlage"
+            value={localSettings.metapromptPrevShortcut || ''}
+            onChange={(shortcut) => handleChange('metapromptPrevShortcut', shortcut)}
+            placeholder="Nicht gesetzt"
+          />
+          <div className="mt-4 p-3 bg-bg-primary rounded-lg border border-bg-secondary">
+            <p className="text-xs text-text-secondary mb-2">
+              <strong>Hinweis:</strong> Diese Shortcuts sind optional. Wenn nicht gesetzt, kannst du die Vorlage im Dashboard auswählen.
+            </p>
+            <p className="text-xs text-text-secondary">
+              Der aktive Metaprompt wird auch im Tray-Icon Tooltip angezeigt.
+            </p>
+          </div>
+        </div>
+      </Card>
+
       <Card title="API-Verhalten">
         <div className="space-y-4">
           <Input

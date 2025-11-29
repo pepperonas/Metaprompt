@@ -206,12 +206,40 @@ export const createTray = (mainWindow: BrowserWindow | null): void => {
   }
 
   tray = new Tray(icon);
-  tray.setToolTip('MRP - Prompt-Optimierer');
+  
+  // Tooltip mit aktuellem Metaprompt-Namen aktualisieren
+  const updateTooltip = () => {
+    const settings = getSettings();
+    const metaprompts = getMetaprompts();
+    const activeMetaprompt = metaprompts.find(m => m.id === settings.activeMetapromptId) ||
+                            metaprompts.find(m => m.isDefault) ||
+                            metaprompts[0];
+    
+    if (activeMetaprompt) {
+      tray?.setToolTip(`MRP - Prompt-Optimierer\nAktive Vorlage: ${activeMetaprompt.name}`);
+    } else {
+      tray?.setToolTip('MRP - Prompt-Optimierer');
+    }
+  };
+  
+  updateTooltip();
 
   // Menü aktualisieren
   const updateMenu = () => {
     if (tray) {
       tray.setContextMenu(createTrayMenu(mainWindow));
+      // Tooltip auch aktualisieren
+      const settings = getSettings();
+      const metaprompts = getMetaprompts();
+      const activeMetaprompt = metaprompts.find(m => m.id === settings.activeMetapromptId) ||
+                              metaprompts.find(m => m.isDefault) ||
+                              metaprompts[0];
+      
+      if (activeMetaprompt) {
+        tray.setToolTip(`MRP - Prompt-Optimierer\nAktive Vorlage: ${activeMetaprompt.name}`);
+      } else {
+        tray.setToolTip('MRP - Prompt-Optimierer');
+      }
     }
   };
 
@@ -245,6 +273,18 @@ export const createTray = (mainWindow: BrowserWindow | null): void => {
 export const updateTrayMenu = (mainWindow: BrowserWindow | null): void => {
   if (tray) {
     tray.setContextMenu(createTrayMenu(mainWindow));
+    // Tooltip auch aktualisieren
+    const settings = getSettings();
+    const metaprompts = getMetaprompts();
+    const activeMetaprompt = metaprompts.find(m => m.id === settings.activeMetapromptId) ||
+                            metaprompts.find(m => m.isDefault) ||
+                            metaprompts[0];
+    
+    if (activeMetaprompt) {
+      tray.setToolTip(`MRP - Prompt-Optimierer\nAktive Vorlage: ${activeMetaprompt.name}`);
+    } else {
+      tray.setToolTip('MRP - Prompt-Optimierer');
+    }
   }
 };
 
