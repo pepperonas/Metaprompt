@@ -95,9 +95,13 @@ app.whenReady().then(() => {
     // Optional: Dock-Icon setzen falls vorhanden
     try {
       // Prüfe verschiedene mögliche Pfade für das Icon
+      // macOS bevorzugt .icns, aber .png funktioniert auch
       const possibleIconPaths = [
+        path.join(__dirname, '../../resources/icon.icns'),
         path.join(__dirname, '../../resources/icon.png'),
+        path.join(process.cwd(), 'resources/icon.icns'),
         path.join(process.cwd(), 'resources/icon.png'),
+        path.join(app.getAppPath(), 'resources/icon.icns'),
         path.join(app.getAppPath(), 'resources/icon.png'),
       ];
       
@@ -110,6 +114,7 @@ app.whenReady().then(() => {
           if (!icon.isEmpty()) {
             app.dock?.setIcon(iconPath);
             iconSet = true;
+            console.log(`✅ Dock-Icon gesetzt: ${iconPath}`);
             break;
           }
         } catch (e) {
@@ -120,11 +125,11 @@ app.whenReady().then(() => {
       
       if (!iconSet) {
         // Kein Icon gefunden, verwende Standard-Icon
-        console.log('Kein Custom-Icon gefunden, verwende Standard-Icon');
+        console.log('⚠️  Kein Custom-Icon gefunden, verwende Standard-Icon');
       }
     } catch (e) {
       // Icon nicht gefunden, ignorieren
-      console.log('Fehler beim Setzen des Dock-Icons:', e);
+      console.log('⚠️  Fehler beim Setzen des Dock-Icons:', e);
     }
   }
   
