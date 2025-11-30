@@ -111,17 +111,26 @@ jobs:
         shell: bash
         run: |
           echo "Searching for release files in dist/:"
+          find dist -type f -name "*.dmg" -o -name "*.exe" -o -name "*.AppImage" | head -10 || echo "No files found"
           ls -lh dist/ || echo "No dist directory found"
           
-          # Finde die Build-Dateien
-          DMG_FILE=$(find dist -name "MRP-*-macOS.dmg" -type f | head -1)
-          EXE_FILE=$(find dist -name "MRP-*-Windows-Portable.exe" -type f | head -1)
-          APPIMAGE_FILE=$(find dist -name "MRP-*-x86_64.AppImage" -type f | head -1)
+          # Finde die Build-Dateien (rekursiv suchen)
+          DMG_FILE=$(find dist -type f -name "MRP-*-macOS.dmg" 2>/dev/null | head -1)
+          EXE_FILE=$(find dist -type f -name "MRP-*-Windows-Portable.exe" 2>/dev/null | head -1)
+          APPIMAGE_FILE=$(find dist -type f -name "MRP-*-x86_64.AppImage" 2>/dev/null | head -1)
+          
+          # Erstelle eine mehrzeilige Liste der gefundenen Dateien für den Upload
+          FILES_TO_UPLOAD=""
           
           if [ -n "$DMG_FILE" ]; then
             echo "dmg_file=$DMG_FILE" >> $GITHUB_OUTPUT
             echo "Found DMG: $DMG_FILE"
             ls -lh "$DMG_FILE"
+            if [ -z "$FILES_TO_UPLOAD" ]; then
+              FILES_TO_UPLOAD="$DMG_FILE"
+            else
+              FILES_TO_UPLOAD="$FILES_TO_UPLOAD"$'\n'"$DMG_FILE"
+            fi
           else
             echo "Warning: No DMG file found"
           fi
@@ -130,6 +139,11 @@ jobs:
             echo "exe_file=$EXE_FILE" >> $GITHUB_OUTPUT
             echo "Found EXE: $EXE_FILE"
             ls -lh "$EXE_FILE"
+            if [ -z "$FILES_TO_UPLOAD" ]; then
+              FILES_TO_UPLOAD="$EXE_FILE"
+            else
+              FILES_TO_UPLOAD="$FILES_TO_UPLOAD"$'\n'"$EXE_FILE"
+            fi
           else
             echo "Warning: No EXE file found"
           fi
@@ -138,15 +152,31 @@ jobs:
             echo "appimage_file=$APPIMAGE_FILE" >> $GITHUB_OUTPUT
             echo "Found AppImage: $APPIMAGE_FILE"
             ls -lh "$APPIMAGE_FILE"
+            if [ -z "$FILES_TO_UPLOAD" ]; then
+              FILES_TO_UPLOAD="$APPIMAGE_FILE"
+            else
+              FILES_TO_UPLOAD="$FILES_TO_UPLOAD"$'\n'"$APPIMAGE_FILE"
+            fi
           else
             echo "Warning: No AppImage file found"
           fi
           
+          # Speichere alle Dateien für den Upload (mehrzeilig)
+          {
+            echo 'files<<EOF'
+            echo "$FILES_TO_UPLOAD"
+            echo 'EOF'
+          } >> $GITHUB_OUTPUT
+          
           # Prüfe ob mindestens eine Datei gefunden wurde
           if [ -z "$DMG_FILE" ] && [ -z "$EXE_FILE" ] && [ -z "$APPIMAGE_FILE" ]; then
             echo "Error: No release files found!"
+            echo "Contents of dist/:"
+            find dist -type f || echo "No files found"
             exit 1
           fi
+          
+          echo "Files to upload: $FILES_TO_UPLOAD"
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -168,10 +198,7 @@ jobs:
             
             ### Änderungen
             Siehe [CHANGELOG.md](CHANGELOG.md) für Details.
-          files: |
-            ${{ steps.find_files.outputs.dmg_file }}
-            ${{ steps.find_files.outputs.exe_file }}
-            ${{ steps.find_files.outputs.appimage_file }}
+          files: ${{ steps.find_files.outputs.files }}
           draft: false
           prerelease: false
         env:
