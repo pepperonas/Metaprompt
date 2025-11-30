@@ -1,5 +1,9 @@
 # Metaprompt
 
+![Metaprompt Banner](assets/mp-gh-banner.png)
+
+![Metaprompt Screenshot](assets/mp-screenshot.png)
+
 Ein Desktop-Tool zur KI-gestützten Prompt-Optimierung mit Clipboard-Integration.
 
 ## Konzept
