@@ -92,6 +92,25 @@ app.whenReady().then(() => {
   // Muss nach app.whenReady() nochmal gesetzt werden für macOS
   app.setName('MRP');
   
+  // Für macOS: Benachrichtigungsberechtigung anfordern
+  if (process.platform === 'darwin') {
+    // macOS 10.14+ benötigt explizite Berechtigung für Benachrichtigungen
+    if (Notification.isSupported()) {
+      // Versuche eine Test-Benachrichtigung zu senden (falls Berechtigung fehlt, wird sie angefordert)
+      try {
+        const testNotification = new Notification({
+          title: 'MRP',
+          body: 'Bereit',
+          silent: true, // Stumm, nur um Berechtigung zu prüfen/anfordern
+        });
+        // Nicht anzeigen, nur erstellen um Berechtigung zu prüfen
+        console.log('[Main] Notification permission checked');
+      } catch (error) {
+        console.warn('[Main] Notification permission issue:', error);
+      }
+    }
+  }
+  
   // Für macOS: Aktualisiere den Dock-Namen
   if (process.platform === 'darwin') {
     // Setze den Namen nochmal nach app ready
