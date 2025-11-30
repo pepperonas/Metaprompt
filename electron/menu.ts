@@ -67,9 +67,14 @@ const createApplicationMenu = (): Menu => {
     },
   ]);
 
+  // Nur aktive Metaprompts anzeigen (außer Standard, der immer aktiv ist)
+  const visibleMetaprompts = metaprompts.filter(mp => 
+    mp.isDefault || (mp.active !== false) // Standard ist immer sichtbar, andere nur wenn aktiv
+  );
+  
   // Metaprompt Submenu
-  const favorites = metaprompts.filter(mp => mp.isFavorite);
-  const others = metaprompts.filter(mp => !mp.isFavorite);
+  const favorites = visibleMetaprompts.filter(mp => mp.isFavorite);
+  const others = visibleMetaprompts.filter(mp => !mp.isFavorite);
 
   const metapromptMenuItems: Electron.MenuItemConstructorOptions[] = [];
 

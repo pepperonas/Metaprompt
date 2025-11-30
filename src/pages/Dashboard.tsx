@@ -121,16 +121,25 @@ const Dashboard: React.FC = () => {
     gemini: 'Gemini',
   };
 
-  // Metaprompt-Optionen für Dropdown - Standard zuerst
-  const metapromptOptions = [...metaprompts]
+  // Metaprompt-Optionen für Dropdown - Favoriten zuerst, dann aktive (nur aktive anzeigen, außer Standard)
+  const visibleMetaprompts = metaprompts.filter(mp => 
+    mp.isDefault || (mp.active !== false) // Standard ist immer sichtbar, andere nur wenn aktiv
+  );
+  
+  const metapromptOptions = [...visibleMetaprompts]
     .sort((a, b) => {
+      // Favoriten zuerst
+      if (a.isFavorite && !b.isFavorite) return -1;
+      if (!a.isFavorite && b.isFavorite) return 1;
+      // Dann Standard
       if (a.isDefault && !b.isDefault) return -1;
       if (!a.isDefault && b.isDefault) return 1;
-      return 0;
+      // Dann alphabetisch
+      return a.name.localeCompare(b.name);
     })
     .map(mp => ({
       value: mp.id,
-      label: mp.name,
+      label: mp.isFavorite ? `⭐ ${mp.name}` : mp.name,
     }));
 
   return (

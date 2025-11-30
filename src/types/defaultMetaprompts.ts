@@ -1414,12 +1414,27 @@ Gib NUR den optimierten Prompt zurück, ohne Erklärungen oder Kommentare. Der P
   },
 ];
 
+// Die wichtigsten 10 Metaprompts, die per Default aktiv sein sollen
+const TOP_10_METAPROMPTS = [
+  'Software-Entwicklung',
+  'Kommunikation',
+  'Datenanalyse',
+  'Rechtssprechung',
+  'Business',
+  'Bildgenerierung',
+  'Bildbearbeitung',
+  'Mindmap-Erstellung',
+  'Datenvisualisierung (Charts)',
+  'Business-Optimierung',
+];
+
 export const createDefaultMetaprompts = (): Metaprompt[] => {
   const now = new Date();
   return DEFAULT_METAPROMPTS.map(mp => ({
     ...mp,
     id: uuidv4(),
     isFavorite: mp.isFavorite ?? false,
+    active: TOP_10_METAPROMPTS.includes(mp.name), // Top 10 sind per Default aktiv
     createdAt: now,
     updatedAt: now,
   }));

@@ -12,6 +12,7 @@ declare global {
       saveMetaprompt: (mp: Metaprompt) => Promise<void>;
       deleteMetaprompt: (id: string) => Promise<void>;
       toggleFavorite: (id: string) => Promise<void>;
+      toggleActive: (id: string) => Promise<void>;
       optimize: (request: OptimizationRequest) => Promise<{ success: boolean; optimizedPrompt?: string; error?: string }>;
       readClipboard: () => Promise<string>;
       writeClipboard: (text: string) => Promise<void>;

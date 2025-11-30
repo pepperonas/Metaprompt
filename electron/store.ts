@@ -89,7 +89,25 @@ export const setApiKey = (provider: Provider, key: string): void => {
 };
 
 export const getMetaprompts = (): Metaprompt[] => {
-  return store.get('metaprompts', []) as Metaprompt[];
+  const metaprompts = store.get('metaprompts', []) as Metaprompt[];
+  
+  // Migration: Setze active für bestehende Metaprompts
+  let needsUpdate = false;
+  const migrated = metaprompts.map(mp => {
+    if (mp.active === undefined) {
+      needsUpdate = true;
+      // Standard-Metaprompt ist immer aktiv, alle anderen werden aktiv gesetzt (kann später deaktiviert werden)
+      return { ...mp, active: mp.isDefault ? true : true };
+    }
+    return mp;
+  });
+  
+  if (needsUpdate) {
+    store.set('metaprompts', migrated);
+    return migrated;
+  }
+  
+  return metaprompts;
 };
 
 export const saveMetaprompt = (metaprompt: Metaprompt): void => {
@@ -133,6 +151,27 @@ export const toggleFavorite = (id: string): void => {
     metaprompts[index] = {
       ...metaprompts[index],
       isFavorite: !metaprompts[index].isFavorite,
+      updatedAt: new Date(),
+    };
+    store.set('metaprompts', metaprompts);
+  }
+};
+
+export const toggleActive = (id: string): void => {
+  const metaprompts = getMetaprompts();
+  const metaprompt = metaprompts.find(m => m.id === id);
+  
+  // Verhindere, dass der Standard-Metaprompt deaktiviert wird
+  if (metaprompt?.isDefault) {
+    throw new Error('Der Standard-Metaprompt kann nicht deaktiviert werden');
+  }
+  
+  const index = metaprompts.findIndex(m => m.id === id);
+  
+  if (index >= 0) {
+    metaprompts[index] = {
+      ...metaprompts[index],
+      active: !(metaprompts[index].active ?? true), // Default ist true wenn undefined
       updatedAt: new Date(),
     };
     store.set('metaprompts', metaprompts);

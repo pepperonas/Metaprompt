@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 import type { Metaprompt } from '../types';
 
 const Metaprompts: React.FC = () => {
-  const { metaprompts, loadMetaprompts, saveMetaprompt, deleteMetaprompt, setDefault, toggleFavorite } = useMetapromptsStore();
+  const { metaprompts, loadMetaprompts, saveMetaprompt, deleteMetaprompt, setDefault, toggleFavorite, toggleActive } = useMetapromptsStore();
   const { settings, updateSettings } = useSettingsStore();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showEditor, setShowEditor] = useState(false);
@@ -300,29 +300,58 @@ const Metaprompts: React.FC = () => {
                         <span>Standard</span>
                       </span>
                     ) : (
-                      <button
-                        onClick={async () => {
-                          try {
-                            await toggleFavorite(mp.id);
-                            await loadMetaprompts();
-                          } catch (error) {
-                            console.error('Fehler beim Setzen der Favoriten:', error);
-                          }
-                        }}
-                        className="focus:outline-none hover:opacity-80 transition-opacity p-1 -ml-1"
-                        title={mp.isFavorite ? 'Aus Favoriten entfernen' : 'Als Favorit markieren'}
-                        aria-label={mp.isFavorite ? 'Aus Favoriten entfernen' : 'Als Favorit markieren'}
-                      >
-                        <svg 
-                          className={`w-5 h-5 transition-all ${mp.isFavorite ? 'text-yellow-500 fill-current' : 'text-text-secondary hover:text-yellow-400'}`} 
-                          fill={mp.isFavorite ? 'currentColor' : 'none'} 
-                          stroke={mp.isFavorite ? 'none' : 'currentColor'}
-                          strokeWidth={mp.isFavorite ? 0 : 1.5}
-                          viewBox="0 0 20 20"
+                      <>
+                        <button
+                          onClick={async () => {
+                            try {
+                              await toggleFavorite(mp.id);
+                              await loadMetaprompts();
+                            } catch (error) {
+                              console.error('Fehler beim Setzen der Favoriten:', error);
+                            }
+                          }}
+                          className="focus:outline-none hover:opacity-80 transition-opacity p-1 -ml-1"
+                          title={mp.isFavorite ? 'Aus Favoriten entfernen' : 'Als Favorit markieren'}
+                          aria-label={mp.isFavorite ? 'Aus Favoriten entfernen' : 'Als Favorit markieren'}
                         >
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                      </button>
+                          <svg 
+                            className={`w-5 h-5 transition-all ${mp.isFavorite ? 'text-yellow-500 fill-current' : 'text-text-secondary hover:text-yellow-400'}`} 
+                            fill={mp.isFavorite ? 'currentColor' : 'none'} 
+                            stroke={mp.isFavorite ? 'none' : 'currentColor'}
+                            strokeWidth={mp.isFavorite ? 0 : 1.5}
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={async () => {
+                            try {
+                              await toggleActive(mp.id);
+                              await loadMetaprompts();
+                            } catch (error) {
+                              console.error('Fehler beim Aktivieren/Deaktivieren:', error);
+                            }
+                          }}
+                          className="focus:outline-none hover:opacity-80 transition-opacity p-1"
+                          title={mp.active !== false ? 'Deaktivieren' : 'Aktivieren'}
+                          aria-label={mp.active !== false ? 'Deaktivieren' : 'Aktivieren'}
+                        >
+                          <svg 
+                            className={`w-5 h-5 transition-all ${mp.active !== false ? 'text-green-500' : 'text-text-secondary hover:text-red-400'}`} 
+                            fill="none" 
+                            stroke="currentColor"
+                            strokeWidth={2}
+                            viewBox="0 0 24 24"
+                          >
+                            {mp.active !== false ? (
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            ) : (
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            )}
+                          </svg>
+                        </button>
+                      </>
                     )}
                     <h3 className={`text-lg font-semibold ${mp.isDefault ? 'text-brand' : 'text-text-primary'}`}>
                       {mp.name}

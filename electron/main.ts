@@ -5,7 +5,7 @@ import path from 'path';
 import { createTray, updateTrayMenu, destroyTray } from './tray';
 import { createApplicationMenuBar, updateApplicationMenu, setMainWindow } from './menu';
 import { registerGlobalShortcut, unregisterAllShortcuts, registerMetapromptShortcuts } from './shortcuts';
-import { getSettings, setSettings, getApiKey, setApiKey, getMetaprompts, saveMetaprompt, deleteMetaprompt, toggleFavorite, getHistory, addHistory } from './store';
+import { getSettings, setSettings, getApiKey, setApiKey, getMetaprompts, saveMetaprompt, deleteMetaprompt, toggleFavorite, toggleActive, getHistory, addHistory } from './store';
 import { getCostsLast30Days } from './costTracking';
 import { calculateCost } from '../src/utils/costCalculator';
 import { readClipboard, writeClipboard } from './clipboard';
@@ -292,6 +292,12 @@ ipcMain.handle('metaprompts:delete', (_event, id: string) => {
 });
 ipcMain.handle('metaprompts:toggleFavorite', (_event, id: string) => {
   toggleFavorite(id);
+  updateTrayMenu(mainWindow);
+  updateApplicationMenu();
+});
+
+ipcMain.handle('metaprompts:toggleActive', (_event, id: string) => {
+  toggleActive(id);
   updateTrayMenu(mainWindow);
   updateApplicationMenu();
 });

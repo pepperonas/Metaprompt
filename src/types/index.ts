@@ -21,6 +21,7 @@ export interface Metaprompt {
   category?: MetapromptCategory;
   isDefault: boolean;
   isFavorite?: boolean;
+  active?: boolean; // Metaprompt aktiv/inaktiv (Standard ist immer aktiv)
   createdAt: Date;
   updatedAt: Date;
 }
