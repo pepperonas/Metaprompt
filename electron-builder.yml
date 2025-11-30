@@ -73,6 +73,11 @@ dmg:
       y: 220
       type: link
       path: /Applications
+  # Automatisches Script nach dem Kopieren
+  background: null
+  icon: null
+  # Nach dem Kopieren: Quarantäne-Attribut entfernen
+  # Hinweis: Das Script wird manuell ausgeführt oder via README-Anweisungen
 
 # Linux - DEB und RPM Installer
 linux:

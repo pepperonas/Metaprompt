@@ -36,9 +36,11 @@ Lade die neueste Version von [GitHub Releases](https://github.com/pepperonas/Met
 2. Öffne die DMG-Datei
 3. Ziehe `Metaprompt.app` nach `Applications`
 4. **Wichtig**: Da die App nicht signiert ist, musst du macOS Gatekeeper umgehen:
-   - **Option 1 (Empfohlen)**: Rechtsklick auf `Metaprompt.app` → "Öffnen" → "Öffnen" bestätigen
-   - **Option 2**: Terminal-Befehl: `xattr -d com.apple.quarantine /Applications/Metaprompt.app`
+   - **Option 1 (Einfachste Methode)**: Rechtsklick auf `Metaprompt.app` im Applications-Ordner → "Öffnen" → Im Dialog "Öffnen" klicken. Danach kannst du die App normal per Doppelklick starten.
+   - **Option 2 (Automatisch)**: Öffne Terminal und führe aus: `xattr -d com.apple.quarantine /Applications/Metaprompt.app`
 5. Starte die App aus dem Applications-Ordner
+
+**💡 Tipp**: Nach dem ersten Öffnen mit Rechtsklick → "Öffnen" kannst du die App danach immer normal per Doppelklick starten.
 
 #### Windows
 1. Lade `Metaprompt-{version}-Windows-Setup.exe` herunter

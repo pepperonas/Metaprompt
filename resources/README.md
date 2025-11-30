@@ -1,20 +1,19 @@
 # Resources
 
-Dieses Verzeichnis enthält die App-Icons für die verschiedenen Plattformen.
+Dieses Verzeichnis enthält Ressourcen für den Build-Prozess.
 
-## Erforderliche Icons
+## Dateien
 
-- `icon.png` - 1024x1024 PNG für Linux
-- `icon.ico` - Windows Icon (mehrere Größen)
-- `icon.icns` - macOS Icon (mehrere Größen)
+- `icon.icns` - macOS App-Icon
+- `icon.ico` - Windows App-Icon  
+- `icon.png` - Linux App-Icon
+- `icons/` - Verschiedene Icon-Größen
+- `install.sh` - Installer-Script zum Entfernen des Quarantäne-Attributs (optional)
 
-## Icon-Generierung
+## Installer-Script
 
-Für die Produktion müssen diese Icons erstellt werden. Tools:
+Das `install.sh` Script kann verwendet werden, um das Quarantäne-Attribut automatisch zu entfernen. Es wird derzeit nicht automatisch ausgeführt, kann aber manuell verwendet werden:
 
-- **macOS**: `iconutil` oder Online-Tools
-- **Windows**: Online-Tools oder ImageMagick
-- **Linux**: Beliebiger PNG-Editor
-
-Die Icons sollten das MRP-Logo enthalten.
-
+```bash
+./resources/install.sh
+```
