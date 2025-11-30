@@ -50,9 +50,16 @@ function App() {
       useSettingsStore.getState().updateSettings({ activeMetapromptId: id });
     });
 
+    const unsubscribeNavigate = window.mrp.onNavigate((page: string) => {
+      if (['dashboard', 'metaprompts', 'settings', 'history'].includes(page)) {
+        setCurrentPage(page as Page);
+      }
+    });
+
     return () => {
       unsubscribeProvider();
       unsubscribeMetaprompt();
+      unsubscribeNavigate();
     };
   }, []);
 

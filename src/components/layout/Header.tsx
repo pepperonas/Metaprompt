@@ -65,11 +65,12 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onPageChange, onAboutClick
           </span>
         </div>
         <nav className="flex items-center space-x-1 flex-shrink-0">
+          {/* Hauptnavigation - Icons mit Labels */}
           {pages.map((page) => (
             <button
               key={page.id}
               onClick={() => onPageChange(page.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
+              className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                 currentPage === page.id
                   ? 'bg-brand text-white shadow-lg shadow-brand/30 glow-brand'
                   : 'text-text-secondary hover:text-text-primary hover:bg-bg-primary active:scale-95'
@@ -80,45 +81,58 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onPageChange, onAboutClick
               <span className={currentPage === page.id ? 'text-white' : 'text-current'}>
                 {page.icon}
               </span>
-              <span>{page.label}</span>
+              <span className="hidden sm:inline">{page.label}</span>
             </button>
           ))}
           
           {/* Separator */}
           <div className="w-px h-7 bg-bg-primary mx-2" />
           
-          {/* Guide button */}
-          <button
-            onClick={onGuideClick}
-            className="p-2.5 rounded-lg transition-all duration-200 text-text-secondary hover:text-text-primary hover:bg-bg-primary active:scale-95"
-            title="Anleitung anzeigen"
-            aria-label="Anleitung"
-          >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-5 w-5" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
+          {/* Utility Buttons - Icons only */}
+          <div className="flex items-center space-x-1">
+            <button
+              onClick={onGuideClick}
+              className="p-2.5 rounded-lg transition-all duration-200 text-text-secondary hover:text-text-primary hover:bg-bg-primary active:scale-95"
+              title="Anleitung anzeigen"
+              aria-label="Anleitung"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
-              />
-            </svg>
-          </button>
-          
-          {/* About button */}
-          <button
-            onClick={onAboutClick}
-            className="px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 text-text-secondary hover:text-text-primary hover:bg-bg-primary active:scale-95"
-            title="Über Metaprompt"
-            aria-label="Über Metaprompt"
-          >
-            Über
-          </button>
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="h-5 w-5" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+                />
+              </svg>
+            </button>
+            
+            <button
+              onClick={onAboutClick}
+              className="p-2.5 rounded-lg transition-all duration-200 text-text-secondary hover:text-text-primary hover:bg-bg-primary active:scale-95"
+              title="Über Metaprompt"
+              aria-label="Über Metaprompt"
+            >
+              <svg 
+                className="h-5 w-5" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+                />
+              </svg>
+            </button>
+          </div>
         </nav>
       </div>
     </header>

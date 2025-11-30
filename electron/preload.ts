@@ -59,6 +59,10 @@ contextBridge.exposeInMainWorld('mrp', {
     ipcRenderer.on('metaprompt:change', (_event, id) => callback(id));
     return () => ipcRenderer.removeAllListeners('metaprompt:change');
   },
+  onNavigate: (callback: (page: string) => void) => {
+    ipcRenderer.on('navigate', (_event, page) => callback(page));
+    return () => ipcRenderer.removeAllListeners('navigate');
+  },
 });
 
 // TypeScript-Deklarationen für window.mrp

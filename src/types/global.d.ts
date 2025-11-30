@@ -26,6 +26,7 @@ declare global {
       onOptimizationComplete: (callback: (result: string) => void) => () => void;
       onProviderChange: (callback: (provider: Provider) => void) => () => void;
       onMetapromptChange: (callback: (id: string) => void) => () => void;
+      onNavigate: (callback: (page: string) => void) => () => void;
     };
   }
 }

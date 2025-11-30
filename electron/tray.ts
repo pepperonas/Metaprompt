@@ -12,6 +12,13 @@ const __dirname = path.dirname(__filename);
 
 let tray: Tray | null = null;
 
+const providerNames: Record<Provider, string> = {
+  openai: 'OpenAI',
+  anthropic: 'Claude',
+  grok: 'Grok',
+  gemini: 'Gemini',
+};
+
 const createTrayMenu = (mainWindow: BrowserWindow | null): Menu => {
   const settings = getSettings();
   const metaprompts = getMetaprompts();
@@ -108,39 +115,81 @@ const createTrayMenu = (mainWindow: BrowserWindow | null): Menu => {
     metapromptMenuItems.length > 0 ? metapromptMenuItems : [{ label: 'Keine Metaprompts', enabled: false }]
   );
 
+  // Aktiven Provider und Metaprompt für Labels
+  const activeProviderName = providerNames[settings.activeProvider] || settings.activeProvider;
+  const activeMetapromptName = activeMetaprompt?.name || 'Keine';
+
   return Menu.buildFromTemplate([
     {
-      label: `Prompt optimieren (${settings.globalShortcut})`,
-      click: () => {
-        // Optimierung direkt auslösen
-        triggerOptimization(mainWindow);
-      },
-    },
-    { type: 'separator' },
-    {
-      label: 'Aktiver Anbieter',
-      submenu: providerMenu,
-    },
-    {
-      label: 'Aktiver Metaprompt',
-      submenu: metapromptMenu,
-    },
-    { type: 'separator' },
-    {
-      label: 'Einstellungen',
+      label: 'Fenster öffnen',
+      accelerator: 'CmdOrCtrl+O',
       click: () => {
         if (mainWindow) {
           if (mainWindow.isVisible()) {
             mainWindow.focus();
           } else {
             mainWindow.show();
+            if (process.platform === 'darwin') {
+              app.dock?.show();
+              app.focus({ steal: true });
+            }
           }
+        }
+      },
+    },
+    {
+      label: `Prompt optimieren`,
+      toolTip: `Shortcut: ${settings.globalShortcut}`,
+      click: () => {
+        triggerOptimization(mainWindow);
+      },
+    },
+    { type: 'separator' },
+    {
+      label: `Anbieter: ${activeProviderName}`,
+      submenu: providerMenu,
+    },
+    {
+      label: `Metaprompt: ${activeMetapromptName.length > 30 ? activeMetapromptName.substring(0, 30) + '...' : activeMetapromptName}`,
+      submenu: metapromptMenu,
+    },
+    { type: 'separator' },
+    {
+      label: 'Dashboard',
+      click: () => {
+        if (mainWindow) {
+          if (!mainWindow.isVisible()) {
+            mainWindow.show();
+            if (process.platform === 'darwin') {
+              app.dock?.show();
+              app.focus({ steal: true });
+            }
+          }
+          mainWindow.focus();
+          mainWindow.webContents.send('navigate', 'dashboard');
+        }
+      },
+    },
+    {
+      label: 'Einstellungen',
+      click: () => {
+        if (mainWindow) {
+          if (!mainWindow.isVisible()) {
+            mainWindow.show();
+            if (process.platform === 'darwin') {
+              app.dock?.show();
+              app.focus({ steal: true });
+            }
+          }
+          mainWindow.focus();
+          mainWindow.webContents.send('navigate', 'settings');
         }
       },
     },
     { type: 'separator' },
     {
       label: 'Beenden',
+      accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Ctrl+Q',
       click: () => {
         app.quit();
       },
