@@ -84,8 +84,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.platform }}-build
-          path: |
-            ${{ steps.find_artifacts.outputs.artifact }}
+          path: ${{ steps.find_artifacts.outputs.artifact }}
           retention-days: 30
           if-no-files-found: error
           overwrite: true
