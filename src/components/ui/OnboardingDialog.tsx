@@ -212,60 +212,44 @@ export const OnboardingDialog: React.FC<OnboardingDialogProps> = ({ isOpen, onCl
         }
       }}
     >
-      <Card className="max-w-2xl w-full mx-4 max-h-[90vh] flex flex-col">
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="space-y-6">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                {step.icon && <span className="text-3xl">{step.icon}</span>}
-                <h2 className="text-2xl font-bold text-text-primary">{step.title}</h2>
-              </div>
-              <button
-                onClick={handleSkip}
-                className="text-text-secondary hover:text-text-primary transition-colors"
-                aria-label="Schließen"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
+      <Card className="max-w-2xl w-full mx-4 min-h-[420px] max-h-[450px] flex flex-col">
+        {/* Header - Fixed */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-bg-primary flex-shrink-0">
+          <div className="flex items-center space-x-3">
+            {step.icon && <span className="text-2xl">{step.icon}</span>}
+            <h2 className="text-xl font-bold text-text-primary">{step.title}</h2>
+          </div>
+          <button
+            onClick={handleSkip}
+            className="text-text-secondary hover:text-text-primary transition-colors p-1 rounded hover:bg-bg-primary"
+            aria-label="Schließen"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
 
-            {/* Progress Bar */}
-            <div className="w-full bg-bg-secondary rounded-full h-2">
-              <div
-                className="bg-brand h-2 rounded-full transition-all duration-300"
-                style={{ width: `${((currentStep + 1) / onboardingSteps.length) * 100}%` }}
-              />
-            </div>
+        {/* Content - Scrollable */}
+        <div className="flex-1 overflow-y-auto px-6 py-4">
+          {step.content}
+        </div>
 
-            {/* Step Indicator */}
-            <div className="text-sm text-text-secondary text-center">
-              Schritt {currentStep + 1} von {onboardingSteps.length}
-            </div>
-
-            {/* Content */}
-            <div className="min-h-[200px]">{step.content}</div>
+        {/* Progress - Fixed */}
+        <div className="border-t border-bg-primary px-6 py-3 flex-shrink-0">
+          <div className="w-full bg-bg-secondary rounded-full h-2 mb-2">
+            <div
+              className="bg-brand h-2 rounded-full transition-all duration-300"
+              style={{ width: `${((currentStep + 1) / onboardingSteps.length) * 100}%` }}
+            />
+          </div>
+          <div className="text-sm text-text-secondary text-center">
+            Schritt {currentStep + 1} von {onboardingSteps.length}
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="border-t border-bg-secondary p-6 space-y-4">
-          {/* Don't show again checkbox */}
-          <label className="flex items-center space-x-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={dontShowAgain}
-              onChange={(e) => setDontShowAgain(e.target.checked)}
-              className="w-4 h-4 text-brand bg-bg-secondary border-bg-primary rounded focus:ring-brand"
-            />
-            <span className="text-sm text-text-secondary">
-              Diesen Dialog nicht mehr anzeigen
-            </span>
-          </label>
-
-          {/* Navigation Buttons */}
+        {/* Footer - Fixed */}
+        <div className="border-t border-bg-primary px-6 py-4 flex-shrink-0">
           <div className="flex items-center justify-between">
             <Button
               onClick={handlePrevious}
@@ -274,18 +258,31 @@ export const OnboardingDialog: React.FC<OnboardingDialogProps> = ({ isOpen, onCl
             >
               Zurück
             </Button>
-            <div className="flex space-x-2">
-              {!isLastStep && (
-                <Button
-                  onClick={handleSkip}
-                  variant="secondary"
-                >
-                  Überspringen
+            <div className="flex items-center gap-4">
+              <label className="flex items-center space-x-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={dontShowAgain}
+                  onChange={(e) => setDontShowAgain(e.target.checked)}
+                  className="w-4 h-4 text-brand bg-bg-secondary border-bg-primary rounded focus:ring-brand"
+                />
+                <span className="text-sm text-text-secondary whitespace-nowrap">
+                  Nicht mehr anzeigen
+                </span>
+              </label>
+              <div className="flex space-x-2">
+                {!isLastStep && (
+                  <Button
+                    onClick={handleSkip}
+                    variant="secondary"
+                  >
+                    Schließen
+                  </Button>
+                )}
+                <Button onClick={handleNext}>
+                  {isLastStep ? 'Fertig' : 'Weiter'}
                 </Button>
-              )}
-              <Button onClick={handleNext}>
-                {isLastStep ? 'Fertig' : 'Weiter'}
-              </Button>
+              </div>
             </div>
           </div>
         </div>
