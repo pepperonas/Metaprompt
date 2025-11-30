@@ -119,26 +119,11 @@ app.whenReady().then(() => {
     console.warn('[Main] Failed to track app launch:', err);
   });
   
-  // Für macOS: Benachrichtigungsberechtigung explizit anfordern
-  if (process.platform === 'darwin') {
-    // macOS 10.14+ benötigt explizite Berechtigung für Benachrichtigungen
-    if (Notification.isSupported()) {
-      // Request notification permission (macOS 10.14+)
-      // Die Berechtigung wird beim ersten Aufruf von show() automatisch angefordert,
-      // aber wir können sie auch explizit anfordern
-      try {
-        // Erstelle und zeige eine Test-Benachrichtigung, um Berechtigung anzufordern
-        const testNotification = new Notification({
-          title: 'Metaprompt',
-          body: 'Benachrichtigungen aktiviert',
-          silent: false,
-        });
-        testNotification.show();
-        console.log('[Main] Notification permission requested');
-      } catch (error) {
-        console.warn('[Main] Notification permission issue:', error);
-      }
-    }
+  // Für macOS: Benachrichtigungsberechtigung wird automatisch beim ersten show() angefordert
+  // Die Berechtigung wird beim ersten Aufruf von Notification.show() automatisch angefordert
+  // Keine explizite Test-Benachrichtigung nötig - wird beim ersten echten Event angefordert
+  if (process.platform === 'darwin' && Notification.isSupported()) {
+    console.log('[Main] Notification support available - permission will be requested on first notification');
   }
   
   // Für macOS: Aktualisiere den Dock-Namen
