@@ -460,3 +460,10 @@ ipcMain.handle('app:getVersion', () => {
   }
 });
 
+// Navigation
+ipcMain.on('navigate', (_event, page: string) => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('navigate', page);
+  }
+});
+
