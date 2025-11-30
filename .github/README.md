@@ -1,6 +1,6 @@
 # Metaprompt
 
-![Metaprompt Banner](../assets/mp-gh-banner.png)
+![Metaprompt Banner](../assets/mp-gh-banner.jpg)
 
 ![Metaprompt Screenshot](../assets/mp-screenshot.png)
 
