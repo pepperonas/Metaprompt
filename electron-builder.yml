@@ -39,10 +39,13 @@ mac:
     CFBundleName: MRP
     CFBundleDisplayName: MRP
     CFBundleExecutable: MRP
-  # Erlaube LICENSE-Dateien
+  # Erlaube LICENSE-Dateien und Icons
   asarUnpack:
     - "**/LICENSE"
     - "**/LICENSE*"
+    - "resources/icon.icns"
+    - "resources/icon.png"
+    - "resources/icons/**/*"
   # Code-Signierung deaktivieren für Development Build
   identity: null
   
