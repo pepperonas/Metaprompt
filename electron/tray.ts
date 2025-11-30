@@ -182,16 +182,21 @@ export const createTray = (mainWindow: BrowserWindow | null): void => {
     // Im Production-Build ist das Icon im App-Bundle
     const appPath = app.getAppPath();
     const resourcesPath = process.resourcesPath;
+    const appResourcesPath = path.join(app.getAppPath(), '../Resources');
     
     possibleIconPaths.push(
+      // Icon direkt aus Resources-Verzeichnis (electron-builder kopiert es dorthin)
+      path.join(appResourcesPath, 'icon.icns'),
+      path.join(appResourcesPath, 'icon.png'),
+      // Icon aus process.resourcesPath (Standard-Pfad)
+      path.join(resourcesPath, 'icon.icns'),
+      path.join(resourcesPath, 'icon.png'),
       // Icon aus dem App-Bundle (electron-builder kopiert es dorthin)
       path.join(resourcesPath, 'app.asar.unpacked/resources/icon.icns'),
       path.join(resourcesPath, 'app.asar.unpacked/resources/icon.png'),
       path.join(resourcesPath, 'app.asar.unpacked/resources/icons/icon-16.png'),
       path.join(resourcesPath, 'app.asar.unpacked/resources/icons/icon-32.png'),
       // Alternative Pfade
-      path.join(resourcesPath, 'icon.icns'),
-      path.join(resourcesPath, 'icon.png'),
       path.join(appPath, 'resources/icon.icns'),
       path.join(appPath, 'resources/icon.png'),
       path.join(appPath, 'resources/icons/icon-16.png'),
@@ -203,7 +208,7 @@ export const createTray = (mainWindow: BrowserWindow | null): void => {
       path.join(__dirname, '../../resources/icons/icon-32.png')
     );
     
-    console.log(`🔍 Production-Mode: Suche Icons in appPath=${appPath}, resourcesPath=${resourcesPath}, __dirname=${__dirname}`);
+    console.log(`🔍 Production-Mode: Suche Icons in appPath=${appPath}, resourcesPath=${resourcesPath}, appResourcesPath=${appResourcesPath}, __dirname=${__dirname}`);
   }
   
   // Versuche Icons in der Reihenfolge zu laden
