@@ -19,7 +19,6 @@ function App() {
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
   const [showAbout, setShowAbout] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [showGuide, setShowGuide] = useState(false);
   const [onboardingChecked, setOnboardingChecked] = useState(false);
   const [version, setVersion] = useState('1.0.0');
   const { loadSettings, settings, updateSettings } = useSettingsStore();
@@ -100,7 +99,6 @@ function App() {
         currentPage={currentPage} 
         onPageChange={setCurrentPage} 
         onAboutClick={() => setShowAbout(true)}
-        onGuideClick={() => setShowGuide(true)}
       />
       <main className="flex-1 overflow-auto">
         {renderPage()}
@@ -108,7 +106,6 @@ function App() {
       <StatusBar />
       <AboutDialog isOpen={showAbout} onClose={() => setShowAbout(false)} version={version} />
       <OnboardingDialog isOpen={showOnboarding} onClose={handleOnboardingClose} />
-      <GuideDialog isOpen={showGuide} onClose={() => setShowGuide(false)} />
     </div>
   );
 }
