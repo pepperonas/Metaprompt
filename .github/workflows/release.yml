@@ -55,16 +55,21 @@ jobs:
             ARTIFACT=$(find dist -name "MRP-*-Windows-Setup.exe" -type f | head -1)
           elif [ "${{ matrix.platform }}" == "linux" ]; then
             # Linux hat mehrere Artefakte (deb, rpm, AppImage)
-            # Finde alle Linux-Artefakte
-            ARTIFACTS=$(find dist -type f \( -name "MRP-*-Linux.deb" -o -name "MRP-*-Linux.rpm" -o -name "MRP-*-x86_64.AppImage" \) | tr '\n' ' ')
+            # Finde alle Linux-Artefakte und speichere sie in einer Datei
+            ARTIFACTS=$(find dist -type f \( -name "MRP-*-Linux.deb" -o -name "MRP-*-Linux.rpm" -o -name "MRP-*-x86_64.AppImage" \))
             if [ -z "$ARTIFACTS" ]; then
               echo "Error: No Linux artifacts found"
               ls -la dist/ || echo "dist directory not found"
               exit 1
             fi
-            # Speichere alle Artefakte als Space-separated String
-            echo "artifact=$ARTIFACTS" >> $GITHUB_OUTPUT
-            echo "Found Linux artifacts: $ARTIFACTS"
+            # Speichere Pfade in einer temporären Datei für multiline output
+            echo "$ARTIFACTS" > /tmp/linux_artifacts.txt
+            # Verwende die Datei für multiline output
+            echo "artifact<<EOF" >> $GITHUB_OUTPUT
+            cat /tmp/linux_artifacts.txt >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+            echo "Found Linux artifacts:"
+            echo "$ARTIFACTS"
           else
             if [ -z "$ARTIFACT" ]; then
               echo "Error: No artifact found for ${{ matrix.platform }}"
