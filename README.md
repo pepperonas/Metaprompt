@@ -210,6 +210,8 @@ metaprompt/
 └── postcss.config.js          # PostCSS Config
 ```
 
+**Hinweis:** Build-Output (`dist/`, `dist-electron/`) und `node_modules/` sind in `.gitignore` und werden nicht versioniert.
+
 ### Wichtige Dateien (NICHT löschen!)
 
 **Source-Dateien (werden in Git versioniert):**
@@ -276,7 +278,7 @@ Weitere Dokumentation findest du im [docs/](./docs/) Verzeichnis:
 
 ⚠️ **WICHTIG**: Source-Dateien in `electron/` und `src/` müssen in Git versioniert werden!
 
-Siehe [IMPORTANT_FILES.md](./IMPORTANT_FILES.md) für eine vollständige Liste aller wichtigen Dateien, die nicht gelöscht werden sollten.
+Siehe [docs/IMPORTANT_FILES.md](./docs/IMPORTANT_FILES.md) für eine vollständige Liste aller wichtigen Dateien, die nicht gelöscht werden sollten.
 
 ### Build-Output
 
