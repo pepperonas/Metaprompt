@@ -183,7 +183,7 @@ export const AboutDialog: React.FC<AboutDialogProps> = ({ isOpen, onClose, versi
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <Card className="max-w-2xl w-full mx-4 max-h-[90vh] flex flex-col">
+      <Card className="max-w-2xl w-full mx-4 max-h-[90vh] flex flex-col" style={{ minHeight: '600px', height: 'auto' }}>
         {/* Tabs */}
         <div className="flex border-b border-bg-secondary">
           <button
@@ -212,7 +212,7 @@ export const AboutDialog: React.FC<AboutDialogProps> = ({ isOpen, onClose, versi
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-6 min-h-[400px]">
           {activeTab === 'about' ? (
             <div className="space-y-6">
               <div className="text-center">
@@ -265,7 +265,7 @@ export const AboutDialog: React.FC<AboutDialogProps> = ({ isOpen, onClose, versi
               </div>
             </div>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-6 min-h-[400px]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   {currentGuideStep.icon && <span className="text-3xl">{currentGuideStep.icon}</span>}
