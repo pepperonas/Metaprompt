@@ -123,6 +123,7 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onPageChange, onAboutClick
               ref={buttonRef}
               onClick={() => setShowMenu(!showMenu)}
               className="p-2.5 rounded-lg transition-all duration-200 text-text-secondary hover:text-text-primary hover:bg-bg-primary active:scale-95"
+              style={{ WebkitAppRegion: 'no-drag' as any }}
               title="Mehr Optionen"
               aria-label="Mehr Optionen"
               aria-expanded={showMenu}
@@ -156,6 +157,7 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onPageChange, onAboutClick
                     onGuideClick();
                   }}
                   className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-text-primary hover:bg-bg-primary transition-colors duration-150 text-left"
+                  style={{ WebkitAppRegion: 'no-drag' as any }}
                   role="menuitem"
                 >
                   <svg 
