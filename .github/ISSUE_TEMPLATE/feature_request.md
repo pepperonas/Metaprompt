@@ -20,3 +20,4 @@ Welche Alternativen hast du in Betracht gezogen?
 
 ## Zusätzlicher Kontext
 Füge hier weitere Informationen oder Screenshots hinzu.
+

@@ -697,3 +697,4 @@ export const updateApplicationMenu = (): void => {
   const menu = createApplicationMenu();
   Menu.setApplicationMenu(menu);
 };
+

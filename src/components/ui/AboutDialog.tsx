@@ -1,6 +1,5 @@
 import React from 'react';
 import { Card } from './Card';
-import { Button } from './Button';
 
 interface AboutDialogProps {
   isOpen: boolean;
@@ -15,7 +14,17 @@ export const AboutDialog: React.FC<AboutDialogProps> = ({ isOpen, onClose, versi
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <Card className="max-w-md w-full mx-4">
+      <Card className="max-w-md w-full mx-4 relative">
+        {/* Close Button oben rechts */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-text-secondary hover:text-text-primary transition-colors p-1 rounded-lg hover:bg-bg-primary z-10"
+          aria-label="Schließen"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
         <div className="space-y-6">
           {/* App Icon */}
           <div className="flex justify-center">
@@ -89,16 +98,6 @@ export const AboutDialog: React.FC<AboutDialogProps> = ({ isOpen, onClose, versi
             </a>
           </div>
 
-          {/* Close Button */}
-          <div className="flex justify-center pt-2">
-            <Button 
-              onClick={onClose} 
-              variant="secondary"
-              className="border border-bg-primary hover:border-brand/50 hover:shadow-lg hover:shadow-brand/20 transition-all duration-200"
-            >
-              Schließen
-            </Button>
-          </div>
         </div>
       </Card>
     </div>

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metaprompt Analytics - Admin Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #1a1c27;
+      color: #ffffff;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      margin-bottom: 2rem;
+      color: #4a90e2;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+      background: #2c2e3b;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      border: 1px solid #3c3e4b;
+    }
+    
+    .stat-card h3 {
+      font-size: 0.875rem;
+      color: #b0b3c1;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .stat-card .value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #4a90e2;
+    }
+    
+    .stat-card .subvalue {
+      font-size: 0.875rem;
+      color: #b0b3c1;
+      margin-top: 0.25rem;
+    }
+    
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .chart-card {
+      background: #2c2e3b;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      border: 1px solid #3c3e4b;
+    }
+    
+    .chart-card h2 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      color: #ffffff;
+    }
+    
+    .chart-container {
+      position: relative;
+      height: 300px;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: #b0b3c1;
+    }
+    
+    .error {
+      background: #ff6b35;
+      color: white;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .refresh-btn {
+      background: #4a90e2;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      transition: background 0.2s;
+    }
+    
+    .refresh-btn:hover {
+      background: #357abd;
+    }
+    
+    .refresh-btn:disabled {
+      background: #3c3e4b;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Metaprompt Analytics Dashboard</h1>
+    
+    <button class="refresh-btn" id="refreshBtn" onclick="loadData()">🔄 Aktualisieren</button>
+    
+    <div id="error" class="error" style="display: none;"></div>
+    
+    <div id="loading" class="loading">Lade Daten...</div>
+    
+    <div id="content" style="display: none;">
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <h3>Heute</h3>
+          <div class="value" id="todayUsers">-</div>
+          <div class="subvalue" id="todayEvents">- Events</div>
+        </div>
+        <div class="stat-card">
+          <h3>Diese Woche</h3>
+          <div class="value" id="weekUsers">-</div>
+          <div class="subvalue" id="weekEvents">- Events</div>
+        </div>
+        <div class="stat-card">
+          <h3>Dieser Monat</h3>
+          <div class="value" id="monthUsers">-</div>
+          <div class="subvalue" id="monthEvents">- Events</div>
+        </div>
+      </div>
+      
+      <!-- Charts -->
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h2>Version-Verteilung</h2>
+          <div class="chart-container">
+            <canvas id="versionsChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-card">
+          <h2>Plattform-Verteilung</h2>
+          <div class="chart-container">
+            <canvas id="platformsChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-card">
+          <h2>Tägliche aktive Nutzer (30 Tage)</h2>
+          <div class="chart-container">
+            <canvas id="dailyUsersChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-card">
+          <h2>Optimierungen pro Tag (30 Tage)</h2>
+          <div class="chart-container">
+            <canvas id="optimizationsChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const API_URL = '/api/metaprompt';
+    // Admin-Key aus URL-Parameter oder LocalStorage
+    let ADMIN_KEY = new URLSearchParams(window.location.search).get('key');
+    if (!ADMIN_KEY) {
+      ADMIN_KEY = localStorage.getItem('metaprompt_admin_key');
+    }
+    if (!ADMIN_KEY) {
+      ADMIN_KEY = prompt('Admin Key:');
+      if (ADMIN_KEY) {
+        localStorage.setItem('metaprompt_admin_key', ADMIN_KEY);
+      }
+    }
+    
+    if (!ADMIN_KEY) {
+      document.body.innerHTML = '<div class="error">Kein Admin-Key angegeben</div>';
+    }
+    
+    let versionsChart, platformsChart, dailyUsersChart, optimizationsChart;
+    
+    async function loadData() {
+      const refreshBtn = document.getElementById('refreshBtn');
+      refreshBtn.disabled = true;
+      refreshBtn.textContent = '⏳ Lade...';
+      
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('content').style.display = 'none';
+      document.getElementById('error').style.display = 'none';
+      
+      try {
+        // Haupt-Statistiken
+        const statsRes = await fetch(`${API_URL}/stats?key=${ADMIN_KEY}`);
+        if (!statsRes.ok) throw new Error('Failed to load stats');
+        const stats = await statsRes.json();
+        
+        // Tägliche aktive Nutzer
+        const dailyRes = await fetch(`${API_URL}/stats/daily?key=${ADMIN_KEY}&days=30`);
+        if (!dailyRes.ok) throw new Error('Failed to load daily stats');
+        const daily = await dailyRes.json();
+        
+        // Optimierungen pro Tag
+        const optRes = await fetch(`${API_URL}/stats/optimizations?key=${ADMIN_KEY}&days=30`);
+        if (!optRes.ok) throw new Error('Failed to load optimization stats');
+        const optimizations = await optRes.json();
+        
+        // Update Stats Cards
+        document.getElementById('todayUsers').textContent = stats.today.users;
+        document.getElementById('todayEvents').textContent = `${stats.today.events} Events`;
+        document.getElementById('weekUsers').textContent = stats.week.users;
+        document.getElementById('weekEvents').textContent = `${stats.week.events} Events`;
+        document.getElementById('monthUsers').textContent = stats.month.users;
+        document.getElementById('monthEvents').textContent = `${stats.month.events} Events`;
+        
+        // Update Charts
+        updateVersionsChart(stats.versions);
+        updatePlatformsChart(stats.platforms);
+        updateDailyUsersChart(daily);
+        updateOptimizationsChart(optimizations);
+        
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+      } catch (error) {
+        document.getElementById('error').textContent = `Fehler: ${error.message}`;
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('loading').style.display = 'none';
+      } finally {
+        refreshBtn.disabled = false;
+        refreshBtn.textContent = '🔄 Aktualisieren';
+      }
+    }
+    
+    function updateVersionsChart(data) {
+      const ctx = document.getElementById('versionsChart').getContext('2d');
+      
+      if (versionsChart) versionsChart.destroy();
+      
+      versionsChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: Object.keys(data),
+          datasets: [{
+            data: Object.values(data),
+            backgroundColor: [
+              '#4a90e2',
+              '#357abd',
+              '#2a5f94',
+              '#1e4570',
+              '#ff6b35',
+              '#e55a2b',
+            ],
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: '#b0b3c1'
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    function updatePlatformsChart(data) {
+      const ctx = document.getElementById('platformsChart').getContext('2d');
+      
+      // Platform-Namen formatieren
+      const platformNames = {
+        'darwin': 'macOS',
+        'win32': 'Windows',
+        'linux': 'Linux'
+      };
+      
+      const labels = Object.keys(data).map(p => platformNames[p] || p);
+      const values = Object.values(data);
+      
+      if (platformsChart) platformsChart.destroy();
+      
+      platformsChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels,
+          datasets: [{
+            data: values,
+            backgroundColor: [
+              '#4a90e2',
+              '#357abd',
+              '#2a5f94',
+            ],
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: '#b0b3c1'
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    function updateDailyUsersChart(data) {
+      const ctx = document.getElementById('dailyUsersChart').getContext('2d');
+      
+      const labels = data.map(d => new Date(d.date).toLocaleDateString('de-DE', { month: 'short', day: 'numeric' }));
+      const users = data.map(d => d.unique_count);
+      
+      if (dailyUsersChart) dailyUsersChart.destroy();
+      
+      dailyUsersChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Aktive Nutzer',
+            data: users,
+            borderColor: '#4a90e2',
+            backgroundColor: 'rgba(74, 144, 226, 0.1)',
+            tension: 0.4,
+            fill: true,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: {
+                color: '#b0b3c1'
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: '#b0b3c1' },
+              grid: { color: '#3c3e4b' }
+            },
+            y: {
+              ticks: { color: '#b0b3c1' },
+              grid: { color: '#3c3e4b' },
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+    
+    function updateOptimizationsChart(data) {
+      const ctx = document.getElementById('optimizationsChart').getContext('2d');
+      
+      const labels = data.map(d => new Date(d.date).toLocaleDateString('de-DE', { month: 'short', day: 'numeric' }));
+      const counts = data.map(d => d.count);
+      
+      if (optimizationsChart) optimizationsChart.destroy();
+      
+      optimizationsChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Optimierungen',
+            data: counts,
+            backgroundColor: '#ff6b35',
+            borderColor: '#e55a2b',
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: {
+                color: '#b0b3c1'
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: '#b0b3c1' },
+              grid: { color: '#3c3e4b' }
+            },
+            y: {
+              ticks: { color: '#b0b3c1' },
+              grid: { color: '#3c3e4b' },
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+    
+    // Initial load
+    loadData();
+    
+    // Auto-refresh alle 5 Minuten
+    setInterval(loadData, 5 * 60 * 1000);
+  </script>
+</body>
+</html>
+

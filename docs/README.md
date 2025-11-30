@@ -15,3 +15,4 @@ Diese Dokumentation enthält detaillierte Informationen über verschiedene Aspek
 
 - Siehe [CONTRIBUTING.md](../CONTRIBUTING.md) für Beitragsrichtlinien
 - Siehe [README.md](../README.md) für allgemeine Projektinformationen
+

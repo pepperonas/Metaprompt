@@ -41,6 +41,19 @@ contextBridge.exposeInMainWorld('mrp', {
   // App Info
   app: {
     getVersion: (): Promise<string> => ipcRenderer.invoke('app:getVersion'),
+    openExternal: (url: string): Promise<void> => ipcRenderer.invoke('app:openExternal', url),
+  },
+  
+  // License
+  license: {
+    shouldShowSupportDialog: (forceShow?: boolean): Promise<boolean> => ipcRenderer.invoke('license:shouldShowSupportDialog', forceShow),
+    getDaysSinceFirstLaunch: (): Promise<number> => ipcRenderer.invoke('license:getDaysSinceFirstLaunch'),
+    isLicensed: (): Promise<boolean> => ipcRenderer.invoke('license:isLicensed'),
+    getLicenseKey: (): Promise<string | null> => ipcRenderer.invoke('license:getLicenseKey'),
+    getDialogShownCount: (): Promise<number> => ipcRenderer.invoke('license:getDialogShownCount'),
+    activateLicense: (key: string): Promise<boolean> => ipcRenderer.invoke('license:activateLicense', key),
+    dismissDialog: (days?: number): Promise<void> => ipcRenderer.invoke('license:dismissDialog', days),
+    dismissDialogPermanently: (): Promise<void> => ipcRenderer.invoke('license:dismissDialogPermanently'),
   },
   
   // Events

@@ -11,3 +11,4 @@ Dieses Verzeichnis enthält GitHub-spezifische Konfigurationsdateien für das Me
 ## Workflows
 
 - **release.yml** - Automatisierter Build- und Release-Prozess für alle Plattformen
+

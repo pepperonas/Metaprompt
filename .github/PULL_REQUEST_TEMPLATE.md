@@ -19,3 +19,4 @@ Eine klare Beschreibung der Änderungen in diesem Pull Request.
 
 ## Zusätzlicher Kontext
 Füge hier weitere Informationen hinzu, die für Reviewer hilfreich sein könnten.
+

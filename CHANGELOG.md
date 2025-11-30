@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.3.0] - 2025-11-30
+
+### Hinzugefügt
+- **Privacy-first Analytics-System**:
+  - DSGVO-konformes Analytics-Backend mit SQLite-Datenbank
+  - Automatisches Tracking von App-Starts, Optimierungen und Metaprompt-Wechseln
+  - Anonyme UUID pro Installation (keine IP-Adressen, keine Cookies)
+  - Automatisches Cleanup von Events älter als 90 Tage
+  - Admin-Dashboard mit Visualisierungen für:
+    - Tägliche aktive Nutzer
+    - Version-Verteilung
+    - Plattform-Verteilung
+    - Optimierungen pro Tag
+  - Rate-Limiting (10 requests/Minute) für API-Schutz
+  - Silent fail: App funktioniert auch bei Server-Ausfall
+  - Deployment auf VPS mit Nginx, SSL und PM2
+
+### Verbessert
+- **Sicherheit**: Admin-Keys werden nicht mehr in Dokumentation hardcodiert
+- **Dokumentation**: Umfassende Deployment-Anleitung für Analytics-Backend
+
 ## [1.1.6] - 2025-11-30
 
 ### Hinzugefügt

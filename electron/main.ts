@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Notification } from 'electron';
+import { app, BrowserWindow, ipcMain, Notification, shell } from 'electron';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import path from 'path';
@@ -6,6 +6,8 @@ import { createTray, updateTrayMenu, destroyTray } from './tray';
 import { createApplicationMenuBar, updateApplicationMenu, setMainWindow } from './menu';
 import { registerGlobalShortcut, unregisterAllShortcuts, registerMetapromptShortcuts } from './shortcuts';
 import { getSettings, setSettings, getApiKey, setApiKey, getMetaprompts, saveMetaprompt, deleteMetaprompt, toggleFavorite, toggleActive, getHistory, addHistory } from './store';
+import { initializeFirstLaunch, shouldShowSupportDialog, getDaysSinceFirstLaunch, dismissDialog, dismissDialogPermanently, activateLicense, isLicensed, getLicenseKey, getDialogShownCount } from './licensing';
+import { trackAppLaunch, trackOptimization, trackMetapromptSwitch } from './analytics';
 import { getCostsLast30Days } from './costTracking';
 import { calculateCost } from '../src/utils/costCalculator';
 import { readClipboard, writeClipboard } from './clipboard';
@@ -96,6 +98,14 @@ app.whenReady().then(() => {
   // Stelle sicher, dass der App-Name gesetzt ist (für macOS Dock)
   // Muss nach app.whenReady() nochmal gesetzt werden für macOS
   app.setName('Metaprompt');
+  
+  // Initialisiere Lizenz-System (setzt firstLaunchDate falls nötig)
+  initializeFirstLaunch();
+  
+  // Track App-Start (async, non-blocking)
+  trackAppLaunch().catch(err => {
+    console.warn('[Main] Failed to track app launch:', err);
+  });
   
   // Für macOS: Benachrichtigungsberechtigung anfordern
   if (process.platform === 'darwin') {
@@ -254,9 +264,17 @@ app.on('before-quit', () => {
 // Settings
 ipcMain.handle('settings:get', () => getSettings());
 ipcMain.handle('settings:set', (_event, settings: Partial<Settings>) => {
+  const oldMetapromptId = getSettings().activeMetapromptId;
   setSettings(settings);
   updateTrayMenu(mainWindow);
   updateApplicationMenu();
+  
+  // Track Metaprompt-Wechsel wenn geändert
+  if (settings.activeMetapromptId && settings.activeMetapromptId !== oldMetapromptId) {
+    trackMetapromptSwitch(settings.activeMetapromptId).catch(err => {
+      console.warn('[Main] Failed to track metaprompt switch:', err);
+    });
+  }
   
   // Shortcuts neu registrieren falls geändert
   if (settings.globalShortcut !== undefined) {
@@ -418,6 +436,7 @@ ipcMain.handle('optimize', async (_event, request: any) => {
   if (result.success && result.optimizedPrompt) {
     const tokenUsage = result.tokenUsage;
     const cost = tokenUsage ? calculateCost(request.provider, request.model, tokenUsage) : undefined;
+    const metapromptId = getSettings().activeMetapromptId;
     
     console.log(`[Main] Saving optimization to history:`, {
       provider: request.provider,
@@ -432,11 +451,20 @@ ipcMain.handle('optimize', async (_event, request: any) => {
       optimizedPrompt: result.optimizedPrompt,
       provider: request.provider,
       model: request.model,
-      metapromptId: getSettings().activeMetapromptId,
+      metapromptId,
       timestamp: new Date(),
       success: true,
       tokenUsage,
       cost,
+    });
+    
+    // Track erfolgreiche Optimierung
+    trackOptimization({
+      provider: request.provider,
+      metapromptId,
+      success: true,
+    }).catch(err => {
+      console.warn('[Main] Failed to track optimization:', err);
     });
   } else {
     addHistory({
@@ -468,7 +496,21 @@ ipcMain.handle('costs:getLast30Days', (_event, provider: Provider) => {
   return getCostsLast30Days(provider);
 });
 
+// License
+ipcMain.handle('license:shouldShowSupportDialog', (_event, forceShow: boolean = false) => shouldShowSupportDialog(forceShow));
+ipcMain.handle('license:getDaysSinceFirstLaunch', () => getDaysSinceFirstLaunch());
+ipcMain.handle('license:isLicensed', () => isLicensed());
+ipcMain.handle('license:getLicenseKey', () => getLicenseKey());
+ipcMain.handle('license:getDialogShownCount', () => getDialogShownCount());
+ipcMain.handle('license:activateLicense', (_event, key: string) => activateLicense(key));
+ipcMain.handle('license:dismissDialog', (_event, days: number = 7) => dismissDialog(days));
+ipcMain.handle('license:dismissDialogPermanently', () => dismissDialogPermanently());
+
 // App Info
+ipcMain.handle('app:openExternal', (_event, url: string) => {
+  shell.openExternal(url);
+});
+
 ipcMain.handle('app:getVersion', () => {
   try {
     // Versuche verschiedene mögliche Pfade für package.json

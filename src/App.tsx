@@ -11,6 +11,8 @@ import StatusBar from './components/layout/StatusBar';
 import { AboutDialog } from './components/ui/AboutDialog';
 import { OnboardingDialog } from './components/ui/OnboardingDialog';
 import { GuideDialog } from './components/ui/GuideDialog';
+import { SupportDialog } from './components/ui/SupportDialog';
+import { useLicenseStore } from './stores/useLicenseStore';
 import type { Provider } from './types';
 
 type Page = 'dashboard' | 'metaprompts' | 'settings' | 'history';
@@ -20,11 +22,13 @@ function App() {
   const [showAbout, setShowAbout] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
+  const [showSupport, setShowSupport] = useState(false);
   const [onboardingChecked, setOnboardingChecked] = useState(false);
   const [version, setVersion] = useState('1.0.0');
   const { loadSettings, settings, updateSettings } = useSettingsStore();
   const { loadApiKey } = useApiKeysStore();
   const { loadMetaprompts } = useMetapromptsStore();
+  const { loadLicenseStatus, shouldShowDialog } = useLicenseStore();
   
   useEffect(() => {
     // Lade Versionsnummer
@@ -35,6 +39,7 @@ function App() {
     // Initial load
     loadSettings();
     loadMetaprompts();
+    loadLicenseStatus();
     
     // Load all API keys
     (['openai', 'anthropic', 'grok', 'gemini'] as Provider[]).forEach(provider => {
@@ -99,6 +104,22 @@ function App() {
     }
   }, [settings, onboardingChecked]);
 
+  // Prüfe ob Support-Dialog angezeigt werden soll
+  useEffect(() => {
+    const checkSupportDialog = async () => {
+      const shouldShow = await shouldShowDialog();
+      if (shouldShow) {
+        // Verzögerung, damit andere Dialoge zuerst angezeigt werden können
+        const timer = setTimeout(() => {
+          setShowSupport(true);
+        }, 2000);
+        return () => clearTimeout(timer);
+      }
+    };
+    
+    checkSupportDialog();
+  }, [shouldShowDialog]);
+
   const handleOnboardingClose = async (dontShowAgain: boolean) => {
     setShowOnboarding(false);
     // Wenn Checkbox angekreuzt: Onboarding deaktivieren (false)
@@ -122,20 +143,21 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-bg-primary text-text-primary">
+    <div className="flex flex-col h-screen bg-bg-primary text-text-primary overflow-hidden">
       <Header 
         currentPage={currentPage} 
         onPageChange={setCurrentPage} 
         onAboutClick={() => setShowAbout(true)}
         onGuideClick={() => setShowGuide(true)}
       />
-      <main className="flex-1 overflow-auto bg-bg-primary">
+      <main className="flex-1 overflow-auto bg-bg-primary min-h-0">
         {renderPage()}
       </main>
-      <StatusBar />
+      <StatusBar onSupportClick={() => setShowSupport(true)} />
       <AboutDialog isOpen={showAbout} onClose={() => setShowAbout(false)} version={version} />
       <OnboardingDialog isOpen={showOnboarding} onClose={handleOnboardingClose} />
       <GuideDialog isOpen={showGuide} onClose={() => setShowGuide(false)} />
+      <SupportDialog isOpen={showSupport} onClose={() => setShowSupport(false)} />
     </div>
   );
 }

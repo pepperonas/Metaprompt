@@ -1,8 +1,13 @@
 import React from 'react';
 import { useSettingsStore } from '../../stores/useSettingsStore';
+import { SupportBadge } from '../ui/SupportBadge';
 import { formatShortcut } from '../../utils/formatShortcut';
 
-const StatusBar: React.FC = () => {
+interface StatusBarProps {
+  onSupportClick?: () => void;
+}
+
+const StatusBar: React.FC<StatusBarProps> = ({ onSupportClick }) => {
   const { settings } = useSettingsStore();
   const [version, setVersion] = React.useState('1.0.0');
 
@@ -11,7 +16,7 @@ const StatusBar: React.FC = () => {
   }, []);
 
   return (
-    <footer className="bg-bg-secondary border-t border-bg-primary px-8 py-3">
+    <footer className="bg-bg-secondary border-t border-bg-primary px-8 py-3 z-50 flex-shrink-0 fixed bottom-0 left-0 right-0">
       <div className="max-w-7xl mx-auto flex items-center justify-between text-sm text-text-secondary">
         <div className="flex items-center space-x-6">
           <span className="flex items-center space-x-2">
@@ -30,9 +35,12 @@ const StatusBar: React.FC = () => {
             </span>
           )}
         </div>
-        <div className="flex items-center space-x-2">
-          <span className="text-text-secondary">Version</span>
-          <span className="font-semibold text-text-primary">v{version}</span>
+        <div className="flex items-center space-x-4">
+          <SupportBadge onClick={onSupportClick} />
+          <div className="flex items-center space-x-2">
+            <span className="text-text-secondary">Version</span>
+            <span className="font-semibold text-text-primary">v{version}</span>
+          </div>
         </div>
       </div>
     </footer>

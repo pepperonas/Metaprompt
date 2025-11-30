@@ -1,6 +1,6 @@
 {
   "name": "metaprompt",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "KI-gestützte Prompt-Optimierung mit 60+ Metaprompts und Multi-Provider-Unterstützung",
   "author": "Martin Pfeffer <info@celox.io>",
   "license": "MIT",
@@ -28,6 +28,7 @@
   "productName": "Metaprompt",
   "scripts": {
     "generate-icons": "node scripts/generate-icons.js",
+    "generate-license-keys": "node scripts/generate-license-keys.js",
     "start": "vite",
     "dev": "vite",
     "build": "vite build",

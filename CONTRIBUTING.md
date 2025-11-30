@@ -80,3 +80,4 @@ Bevor du einen Pull Request erstellst, stelle sicher, dass:
 Bei Fragen erstelle einfach ein Issue oder kontaktiere die Maintainer.
 
 Vielen Dank für deinen Beitrag! 🙏
+

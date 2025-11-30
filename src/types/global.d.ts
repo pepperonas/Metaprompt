@@ -22,6 +22,17 @@ declare global {
       showNotification: (title: string, body: string, success?: boolean) => Promise<void>;
       app: {
         getVersion: () => Promise<string>;
+        openExternal: (url: string) => Promise<void>;
+      };
+      license: {
+        shouldShowSupportDialog: (forceShow?: boolean) => Promise<boolean>;
+        getDaysSinceFirstLaunch: () => Promise<number>;
+        isLicensed: () => Promise<boolean>;
+        getLicenseKey: () => Promise<string | null>;
+        getDialogShownCount: () => Promise<number>;
+        activateLicense: (key: string) => Promise<boolean>;
+        dismissDialog: (days?: number) => Promise<void>;
+        dismissDialogPermanently: () => Promise<void>;
       };
       onShortcutTriggered: (callback: () => void) => () => void;
       onOptimizationComplete: (callback: (result: string) => void) => () => void;
@@ -36,3 +47,4 @@ declare global {
 }
 
 export {};
+

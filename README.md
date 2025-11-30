@@ -19,6 +19,7 @@ Metaprompt verwendet **Metaprompts** als Vorlagen, um normale Prompts zu optimie
 - ✅ History der letzten 20 Optimierungen
 - ✅ Dunkles Theme mit modernem Design
 - ✅ Installer-Pakete für alle Plattformen (Windows NSIS, macOS DMG, Linux DEB/RPM/AppImage)
+- ✅ **Privacy-first Analytics**: DSGVO-konformes Analytics-System mit anonymen UUIDs, automatischem Cleanup und Admin-Dashboard
 
 ## Installation
 
