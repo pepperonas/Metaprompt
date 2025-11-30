@@ -10,12 +10,12 @@ import { updateTrayMenu } from './tray';
 export const triggerOptimization = async (mainWindow: BrowserWindow | null): Promise<void> => {
   try {
     // Notification: Optimierung startet
-    showNotification('MRP', 'Optimierung gestartet...', true);
+    showNotification('Metaprompt', 'Optimierung gestartet...', true);
     
     const clipboardText = readClipboard();
     
     if (!clipboardText || clipboardText.trim().length === 0) {
-      showNotification('MRP', 'Zwischenablage ist leer', false);
+      showNotification('Metaprompt', 'Zwischenablage ist leer', false);
       return;
     }
 
@@ -33,18 +33,18 @@ export const triggerOptimization = async (mainWindow: BrowserWindow | null): Pro
 
     if (result.success && result.optimizedPrompt) {
       writeClipboard(result.optimizedPrompt);
-      showNotification('MRP', 'Prompt erfolgreich optimiert', true);
+      showNotification('Metaprompt', 'Prompt erfolgreich optimiert', true);
       
       // Event an Renderer senden
       if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.webContents.send('optimization:complete', result.optimizedPrompt);
       }
     } else {
-      showNotification('MRP', `Fehler: ${result.error || 'Unbekannter Fehler'}`, false);
+      showNotification('Metaprompt', `Fehler: ${result.error || 'Unbekannter Fehler'}`, false);
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unbekannter Fehler';
-    showNotification('MRP', `Fehler: ${message}`, false);
+    showNotification('Metaprompt', `Fehler: ${message}`, false);
   }
 };
 
@@ -109,7 +109,7 @@ const switchToNextMetaprompt = (mainWindow: BrowserWindow | null): void => {
     mainWindow.webContents.send('metaprompt:change', nextMetaprompt.id);
   }
   
-  showNotification('MRP', `Metaprompt: ${nextMetaprompt.name}`, true);
+  showNotification('Metaprompt', `Metaprompt: ${nextMetaprompt.name}`, true);
 };
 
 const switchToPrevMetaprompt = (mainWindow: BrowserWindow | null): void => {
@@ -136,7 +136,7 @@ const switchToPrevMetaprompt = (mainWindow: BrowserWindow | null): void => {
     mainWindow.webContents.send('metaprompt:change', prevMetaprompt.id);
   }
   
-  showNotification('MRP', `Metaprompt: ${prevMetaprompt.name}`, true);
+  showNotification('Metaprompt', `Metaprompt: ${prevMetaprompt.name}`, true);
 };
 
 // Registriere Metaprompt-Wechsel-Shortcuts

@@ -1,12 +1,12 @@
 {
-  "name": "mrp",
+  "name": "metaprompt",
   "version": "1.2.0",
-  "description": "Prompt-Optimierer - AI-powered prompt optimization tool",
+  "description": "Metaprompt - AI-powered prompt optimization tool",
   "main": "dist-electron/main.js",
   "author": "Martin Pfeffer | celox.io",
   "license": "MIT",
   "private": true,
-  "productName": "MRP",
+  "productName": "Metaprompt",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

@@ -15,11 +15,11 @@ interface OnboardingDialogProps {
 
 const onboardingSteps: OnboardingStep[] = [
   {
-    title: 'Willkommen bei MRP!',
+    title: 'Willkommen bei Metaprompt!',
     content: (
       <div className="space-y-4">
         <p className="text-text-secondary">
-          MRP (Prompt-Optimierer) ist ein Desktop-Tool zur KI-gestützten Prompt-Optimierung mit Clipboard-Integration.
+          Metaprompt ist ein Desktop-Tool zur KI-gestützten Prompt-Optimierung mit Clipboard-Integration.
         </p>
         <p className="text-text-secondary">
           In diesem kurzen Walkthrough zeigen wir dir alle wichtigen Features und wie du die App einrichtest.

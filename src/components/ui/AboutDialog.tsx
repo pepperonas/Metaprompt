@@ -18,7 +18,7 @@ export const AboutDialog: React.FC<AboutDialogProps> = ({ isOpen, onClose, versi
       <Card className="max-w-md w-full mx-4">
         <div className="space-y-6">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-text-primary mb-2">MRP</h2>
+            <h2 className="text-2xl font-bold text-text-primary mb-2">Metaprompt</h2>
             <p className="text-text-secondary mb-1">Prompt-Optimierer</p>
             <p className="text-sm text-text-secondary">Version {version}</p>
           </div>

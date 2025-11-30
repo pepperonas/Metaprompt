@@ -1,5 +1,5 @@
-appId: io.celox.mrp
-productName: MRP
+appId: io.celox.metaprompt
+productName: Metaprompt
 copyright: "© 2025 Martin Pfeffer | celox.io"
 
 directories:
@@ -31,8 +31,8 @@ nsis:
   allowToChangeInstallationDirectory: false
   createDesktopShortcut: always
   createStartMenuShortcut: true
-  shortcutName: MRP
-  artifactName: "MRP-${version}-Windows-Setup.exe"
+  shortcutName: Metaprompt
+  artifactName: "Metaprompt-${version}-Windows-Setup.exe"
   installerIcon: resources/icon.ico
   uninstallerIcon: resources/icon.ico
   installerHeaderIcon: resources/icon.ico
@@ -47,9 +47,9 @@ mac:
   icon: resources/icon.icns
   category: public.app-category.productivity
   extendInfo:
-    CFBundleName: MRP
-    CFBundleDisplayName: MRP
-    CFBundleExecutable: MRP
+    CFBundleName: Metaprompt
+    CFBundleDisplayName: Metaprompt
+    CFBundleExecutable: Metaprompt
   # Erlaube LICENSE-Dateien und Icons
   asarUnpack:
     - "**/LICENSE"
@@ -61,8 +61,8 @@ mac:
   identity: null
   
 dmg:
-  title: "MRP ${version}"
-  artifactName: "MRP-${version}-macOS.dmg"
+  title: "Metaprompt ${version}"
+  artifactName: "Metaprompt-${version}-macOS.dmg"
   contents:
     - x: 130
       y: 220
@@ -86,11 +86,11 @@ linux:
   maintainer: "Martin Pfeffer <info@celox.io>"
 
 deb:
-  artifactName: "MRP-${version}-Linux.deb"
+  artifactName: "Metaprompt-${version}-Linux.deb"
   priority: optional
 
 rpm:
-  artifactName: "MRP-${version}-Linux.rpm"
+  artifactName: "Metaprompt-${version}-Linux.rpm"
 
 # Keine Auto-Updates für Portable
 publish: null

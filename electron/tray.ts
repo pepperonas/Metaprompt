@@ -269,9 +269,9 @@ export const createTray = (mainWindow: BrowserWindow | null): void => {
                             metaprompts[0];
     
     if (activeMetaprompt) {
-      tray?.setToolTip(`MRP - Prompt-Optimierer\nAktive Vorlage: ${activeMetaprompt.name}`);
+      tray?.setToolTip(`Metaprompt - Prompt-Optimierer\nAktive Vorlage: ${activeMetaprompt.name}`);
     } else {
-      tray?.setToolTip('MRP - Prompt-Optimierer');
+      tray?.setToolTip('Metaprompt - Prompt-Optimierer');
     }
   };
   

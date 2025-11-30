@@ -1,10 +1,10 @@
-# MRP - Prompt-Optimierer
+# Metaprompt
 
 Ein Desktop-Tool zur KI-gestützten Prompt-Optimierung mit Clipboard-Integration.
 
 ## Konzept
 
-MRP verwendet **Metaprompts** als Vorlagen, um normale Prompts zu optimieren. Ein Metaprompt definiert, wie ein Prompt verbessert werden soll (z.B. "Mache den Prompt präziser", "Füge Kontext hinzu", "Strukturiere für Code-Generierung"). Du kannst mehrere Metaprompts als Vorlagen speichern und nach Bedarf aktivieren.
+Metaprompt verwendet **Metaprompts** als Vorlagen, um normale Prompts zu optimieren. Ein Metaprompt definiert, wie ein Prompt verbessert werden soll (z.B. "Mache den Prompt präziser", "Füge Kontext hinzu", "Strukturiere für Code-Generierung"). Du kannst mehrere Metaprompts als Vorlagen speichern und nach Bedarf aktivieren.
 
 ## Features
 
@@ -24,16 +24,16 @@ MRP verwendet **Metaprompts** als Vorlagen, um normale Prompts zu optimieren. Ei
 
 ### Für Endbenutzer
 
-Lade die neueste Version von [GitHub Releases](https://github.com/pepperonas/mrp/releases) herunter:
+Lade die neueste Version von [GitHub Releases](https://github.com/pepperonas/metaprompt/releases) herunter:
 
 #### macOS
-1. Lade `MRP-{version}-macOS.dmg` herunter
+1. Lade `Metaprompt-{version}-macOS.dmg` herunter
 2. Öffne die DMG-Datei
-3. Ziehe `MRP.app` nach `Applications`
+3. Ziehe `Metaprompt.app` nach `Applications`
 4. Starte die App aus dem Applications-Ordner
 
 #### Windows
-1. Lade `MRP-{version}-Windows-Setup.exe` herunter
+1. Lade `Metaprompt-{version}-Windows-Setup.exe` herunter
 2. Führe die Setup-Datei aus
 3. Folge dem Installationsassistenten (One-Click Installation)
 4. Die App wird automatisch im Startmenü und auf dem Desktop verlinkt
@@ -41,19 +41,19 @@ Lade die neueste Version von [GitHub Releases](https://github.com/pepperonas/mrp
 #### Linux
 
 **Debian/Ubuntu:**
-1. Lade `MRP-{version}-Linux.deb` herunter
-2. Installation: `sudo dpkg -i MRP-*.deb`
+1. Lade `Metaprompt-{version}-Linux.deb` herunter
+2. Installation: `sudo dpkg -i Metaprompt-*.deb`
    - Oder: Doppelklick im Datei-Manager
 
 **Fedora/RedHat:**
-1. Lade `MRP-{version}-Linux.rpm` herunter
-2. Installation: `sudo rpm -i MRP-*.rpm`
+1. Lade `Metaprompt-{version}-Linux.rpm` herunter
+2. Installation: `sudo rpm -i Metaprompt-*.rpm`
    - Oder: Doppelklick im Datei-Manager
 
 **AppImage (Portable):**
-1. Lade `MRP-{version}-x86_64.AppImage` herunter
-2. Mache die Datei ausführbar: `chmod +x MRP-*.AppImage`
-3. Starte die App: `./MRP-*.AppImage`
+1. Lade `Metaprompt-{version}-*.AppImage` herunter
+2. Mache die Datei ausführbar: `chmod +x Metaprompt-*.AppImage`
+3. Starte die App: `./Metaprompt-*.AppImage`
 
 ## Entwicklung
 
@@ -94,12 +94,12 @@ npm run build:linux  # Erstellt Linux DEB, RPM und AppImage
 
 Die Builds werden im `dist/` Verzeichnis erstellt:
 
-- **Windows**: `MRP-{version}-Windows-Setup.exe` (NSIS Installer)
-- **macOS**: `MRP-{version}-macOS.dmg` (DMG Installer)
-- **Linux**: 
-  - `MRP-{version}-Linux.deb` (Debian/Ubuntu)
-  - `MRP-{version}-Linux.rpm` (Fedora/RedHat)
-  - `MRP-{version}-x86_64.AppImage` (Portable)
+- **Windows**: `Metaprompt-{version}-Windows-Setup.exe` (NSIS Installer)
+- **macOS**: `Metaprompt-{version}-macOS.dmg` (DMG Installer)
+- **Linux**:
+  - `Metaprompt-{version}-Linux.deb` (Debian/Ubuntu)
+  - `Metaprompt-{version}-Linux.rpm` (Fedora/RedHat)
+  - `Metaprompt-{version}-*.AppImage` (Portable)
 
 ## Verwendung
 

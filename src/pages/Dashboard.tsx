@@ -41,14 +41,14 @@ const Dashboard: React.FC = () => {
       console.log('[Dashboard] Starting optimization...');
       
       // Notification: Optimierung startet
-      await window.mrp.showNotification('MRP', 'Optimierung gestartet...', true);
+      await window.mrp.showNotification('Metaprompt', 'Optimierung gestartet...', true);
       
       const clipboardText = await window.mrp.readClipboard();
       console.log('[Dashboard] Clipboard text length:', clipboardText?.length || 0);
       
       if (!clipboardText || clipboardText.trim().length === 0) {
         console.warn('[Dashboard] Clipboard is empty');
-        await window.mrp.showNotification('MRP', 'Zwischenablage ist leer', false);
+        await window.mrp.showNotification('Metaprompt', 'Zwischenablage ist leer', false);
         setIsOptimizing(false);
         return;
       }
@@ -84,17 +84,17 @@ const Dashboard: React.FC = () => {
 
       if (result.success && result.optimizedPrompt) {
         await window.mrp.writeClipboard(result.optimizedPrompt);
-        await window.mrp.showNotification('MRP', 'Prompt erfolgreich optimiert und in Zwischenablage kopiert!', true);
+        await window.mrp.showNotification('Metaprompt', 'Prompt erfolgreich optimiert und in Zwischenablage kopiert!', true);
       } else {
         const errorMsg = result.error || 'Unbekannter Fehler';
         console.error('[Dashboard] Optimization failed:', errorMsg);
-        await window.mrp.showNotification('MRP', `Fehler: ${errorMsg}`, false);
+        await window.mrp.showNotification('Metaprompt', `Fehler: ${errorMsg}`, false);
         alert(`Fehler bei der Optimierung: ${errorMsg}`);
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unbekannter Fehler';
       console.error('[Dashboard] Exception during optimization:', error);
-      await window.mrp.showNotification('MRP', `Fehler: ${errorMessage}`, false);
+      await window.mrp.showNotification('Metaprompt', `Fehler: ${errorMessage}`, false);
       alert(`Fehler: ${errorMessage}`);
     } finally {
       setIsOptimizing(false);

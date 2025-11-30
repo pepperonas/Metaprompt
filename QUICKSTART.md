@@ -4,14 +4,14 @@
 
 ### Für Endbenutzer
 
-Lade die neueste Version von [GitHub Releases](https://github.com/pepperonas/mrp/releases) herunter und installiere sie für dein Betriebssystem:
+Lade die neueste Version von [GitHub Releases](https://github.com/pepperonas/metaprompt/releases) herunter und installiere sie für dein Betriebssystem:
 
-- **macOS**: `MRP-{version}-macOS.dmg` - Öffne DMG und ziehe App nach Applications
-- **Windows**: `MRP-{version}-Windows-Setup.exe` - Führe Setup aus (One-Click Installation)
+- **macOS**: `Metaprompt-{version}-macOS.dmg` - Öffne DMG und ziehe App nach Applications
+- **Windows**: `Metaprompt-{version}-Windows-Setup.exe` - Führe Setup aus (One-Click Installation)
 - **Linux**: 
-  - `MRP-{version}-Linux.deb` (Debian/Ubuntu) - `sudo dpkg -i MRP-*.deb`
-  - `MRP-{version}-Linux.rpm` (Fedora/RedHat) - `sudo rpm -i MRP-*.rpm`
-  - `MRP-{version}-x86_64.AppImage` (Portable) - `chmod +x MRP-*.AppImage && ./MRP-*.AppImage`
+  - `Metaprompt-{version}-Linux.deb` (Debian/Ubuntu) - `sudo dpkg -i Metaprompt-*.deb`
+  - `Metaprompt-{version}-Linux.rpm` (Fedora/RedHat) - `sudo rpm -i Metaprompt-*.rpm`
+  - `Metaprompt-{version}-*.AppImage` (Portable) - `chmod +x Metaprompt-*.AppImage && ./Metaprompt-*.AppImage`
 
 ### Für Entwickler
 

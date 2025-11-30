@@ -22,11 +22,11 @@ const __dirname = path.dirname(__filename);
 
 // App-Name für macOS Dock setzen (muss sehr früh gesetzt werden, bevor app ready ist)
 // Wichtig: Muss vor app.whenReady() gesetzt werden
-app.setName('MRP');
+app.setName('Metaprompt');
 
 // Für macOS: Setze auch den Bundle-Namen über process.env (für Entwicklungsmodus)
 if (process.platform === 'darwin') {
-  process.env.ELECTRON_APP_NAME = 'MRP';
+  process.env.ELECTRON_APP_NAME = 'Metaprompt';
 }
 
 let mainWindow: BrowserWindow | null = null;
@@ -46,7 +46,7 @@ const createWindow = (): void => {
       symbolColor: '#FFFFFF',
       height: 40,
     } : undefined,
-    title: 'MRP',
+    title: 'Metaprompt',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
@@ -90,7 +90,7 @@ const createWindow = (): void => {
 app.whenReady().then(() => {
   // Stelle sicher, dass der App-Name gesetzt ist (für macOS Dock)
   // Muss nach app.whenReady() nochmal gesetzt werden für macOS
-  app.setName('MRP');
+  app.setName('Metaprompt');
   
   // Für macOS: Benachrichtigungsberechtigung anfordern
   if (process.platform === 'darwin') {
@@ -99,7 +99,7 @@ app.whenReady().then(() => {
       // Versuche eine Test-Benachrichtigung zu senden (falls Berechtigung fehlt, wird sie angefordert)
       try {
         const testNotification = new Notification({
-          title: 'MRP',
+          title: 'Metaprompt',
           body: 'Bereit',
           silent: true, // Stumm, nur um Berechtigung zu prüfen/anfordern
         });
@@ -114,7 +114,7 @@ app.whenReady().then(() => {
   // Für macOS: Aktualisiere den Dock-Namen
   if (process.platform === 'darwin') {
     // Setze den Namen nochmal nach app ready
-    app.setName('MRP');
+    app.setName('Metaprompt');
     // Optional: Dock-Icon setzen falls vorhanden
     try {
       // Prüfe verschiedene mögliche Pfade für das Icon
@@ -328,7 +328,7 @@ ipcMain.handle('optimize', async (_event, request: any) => {
   // Notification: Optimierung startet (immer beim Start)
   if (Notification.isSupported()) {
     new Notification({
-      title: 'MRP',
+      title: 'Metaprompt',
       body: 'Optimierung gestartet...',
       urgency: 'normal',
     }).show();
@@ -354,13 +354,13 @@ ipcMain.handle('optimize', async (_event, request: any) => {
   if (Notification.isSupported()) {
     if (result.success && result.optimizedPrompt) {
       new Notification({
-        title: 'MRP',
+        title: 'Metaprompt',
         body: 'Prompt erfolgreich optimiert!',
         urgency: 'normal',
       }).show();
     } else {
       new Notification({
-        title: 'MRP',
+        title: 'Metaprompt',
         body: `Fehler: ${result.error || 'Unbekannter Fehler'}`,
         urgency: 'critical',
       }).show();

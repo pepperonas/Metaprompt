@@ -15,15 +15,15 @@ jobs:
         include:
           - os: macos-latest
             platform: mac
-            artifact_name: MRP-*-macOS.dmg
+            artifact_name: Metaprompt-*-macOS.dmg
             build_command: npm run build:mac
           - os: windows-latest
             platform: win
-            artifact_name: MRP-*-Windows-Setup.exe
+            artifact_name: Metaprompt-*-Windows-Setup.exe
             build_command: npm run build:win
           - os: ubuntu-latest
             platform: linux
-            artifact_name: MRP-*-Linux.*
+            artifact_name: Metaprompt-*-Linux.*
             build_command: npm run build:linux
 
     steps:
@@ -58,7 +58,7 @@ jobs:
           
           if [ "${{ matrix.platform }}" == "mac" ]; then
             echo "🔍 Looking for macOS DMG files..."
-            ARTIFACT=$(find dist -name "MRP-*-macOS.dmg" -type f | head -1)
+            ARTIFACT=$(find dist -name "Metaprompt-*-macOS.dmg" -type f | head -1)
             if [ -z "$ARTIFACT" ]; then
               echo "❌ Error: No macOS DMG found"
               find dist -type f -name "*.dmg" || echo "No .dmg files found"
@@ -68,7 +68,7 @@ jobs:
             echo "artifact=$ARTIFACT" >> $GITHUB_OUTPUT
           elif [ "${{ matrix.platform }}" == "win" ]; then
             echo "🔍 Looking for Windows Setup files..."
-            ARTIFACT=$(find dist -name "MRP-*-Windows-Setup.exe" -type f | head -1)
+            ARTIFACT=$(find dist -name "Metaprompt-*-Windows-Setup.exe" -type f | head -1)
             if [ -z "$ARTIFACT" ]; then
               echo "❌ Error: No Windows Setup found"
               find dist -type f -name "*.exe" || echo "No .exe files found"
@@ -78,7 +78,7 @@ jobs:
             echo "artifact=$ARTIFACT" >> $GITHUB_OUTPUT
           elif [ "${{ matrix.platform }}" == "linux" ]; then
             echo "🔍 Looking for Linux artifacts (deb, rpm, AppImage)..."
-            ARTIFACTS=$(find dist -type f \( -name "MRP-*-Linux.deb" -o -name "MRP-*-Linux.rpm" -o -name "MRP-*-x86_64.AppImage" \))
+            ARTIFACTS=$(find dist -type f \( -name "Metaprompt-*-Linux.deb" -o -name "Metaprompt-*-Linux.rpm" -o -name "*.AppImage" \))
             if [ -z "$ARTIFACTS" ]; then
               echo "❌ Error: No Linux artifacts found"
               echo "Looking for any Linux files:"
@@ -164,36 +164,36 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ steps.get_version.outputs.version }}
           body: |
-            ## MRP - Prompt-Optimierer ${{ steps.get_version.outputs.version }}
+            ## Metaprompt ${{ steps.get_version.outputs.version }}
             
             ### Downloads & Installation
             
             #### macOS
-            - **Installer**: MRP-${{ steps.get_version.outputs.version }}-macOS.dmg
-              - Öffne die DMG-Datei und ziehe MRP.app nach Applications
+            - **Installer**: Metaprompt-${{ steps.get_version.outputs.version }}-macOS.dmg
+              - Öffne die DMG-Datei und ziehe Metaprompt.app nach Applications
               - Apple Silicon (arm64) - Intel Macs können mit Rosetta 2 ausführen
             
             #### Windows
-            - **Installer**: MRP-${{ steps.get_version.outputs.version }}-Windows-Setup.exe
+            - **Installer**: Metaprompt-${{ steps.get_version.outputs.version }}-Windows-Setup.exe
               - Führe die Setup-Datei aus und folge dem Installationsassistenten
               - Die App wird automatisch im Startmenü und auf dem Desktop verlinkt
             
             #### Linux
-            - **DEB Package** (Debian/Ubuntu): MRP-${{ steps.get_version.outputs.version }}-Linux.deb
-              - Installation: `sudo dpkg -i MRP-*.deb` oder Doppelklick in einem Paket-Manager
-            - **RPM Package** (Fedora/RedHat): MRP-${{ steps.get_version.outputs.version }}-Linux.rpm
-              - Installation: `sudo rpm -i MRP-*.rpm` oder Doppelklick in einem Paket-Manager
-            - **AppImage** (Portable): MRP-${{ steps.get_version.outputs.version }}-x86_64.AppImage
-              - Mache die Datei ausführbar: `chmod +x MRP-*.AppImage`
-              - Starte die App: `./MRP-*.AppImage`
+            - **DEB Package** (Debian/Ubuntu): Metaprompt-${{ steps.get_version.outputs.version }}-Linux.deb
+              - Installation: `sudo dpkg -i Metaprompt-*.deb` oder Doppelklick in einem Paket-Manager
+            - **RPM Package** (Fedora/RedHat): Metaprompt-${{ steps.get_version.outputs.version }}-Linux.rpm
+              - Installation: `sudo rpm -i Metaprompt-*.rpm` oder Doppelklick in einem Paket-Manager
+            - **AppImage** (Portable): Metaprompt-${{ steps.get_version.outputs.version }}-*.AppImage
+              - Mache die Datei ausführbar: `chmod +x Metaprompt-*.AppImage`
+              - Starte die App: `./Metaprompt-*.AppImage`
             
             ### Änderungen
             Siehe [CHANGELOG.md](CHANGELOG.md) für Details.
           files: |
-            dist/MRP-*-macOS.dmg
-            dist/MRP-*-Windows-Setup.exe
-            dist/MRP-*-Linux.deb
-            dist/MRP-*-Linux.rpm
+            dist/Metaprompt-*-macOS.dmg
+            dist/Metaprompt-*-Windows-Setup.exe
+            dist/Metaprompt-*-Linux.deb
+            dist/Metaprompt-*-Linux.rpm
             dist/*.AppImage
           draft: false
           prerelease: false
