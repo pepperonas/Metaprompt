@@ -52,10 +52,10 @@ const Settings: React.FC = () => {
   const providers: Provider[] = ['openai', 'anthropic', 'grok', 'gemini'];
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-8 max-w-7xl mx-auto space-y-8">
       <div>
-        <h2 className="text-2xl font-bold text-text-primary mb-2">Einstellungen</h2>
-        <p className="text-text-secondary">
+        <h1 className="text-3xl font-bold text-text-primary mb-2">Einstellungen</h1>
+        <p className="text-text-secondary leading-relaxed">
           {activeTab === 'api-keys' 
             ? 'Konfiguriere deine API-Keys für die verschiedenen Anbieter. Die Keys werden verschlüsselt gespeichert.'
             : 'Konfiguriere das Verhalten der Anwendung und verwalte deine API-Keys'}
@@ -74,30 +74,36 @@ const Settings: React.FC = () => {
       {activeTab === 'general' && (
         <>
           <Card title="Allgemein">
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="text-sm font-medium text-text-primary">Beim Start minimieren</label>
+        <div className="space-y-5">
+          <div className="flex items-center justify-between p-4 bg-bg-primary rounded-lg border border-bg-secondary hover:border-bg-primary transition-colors">
+            <div className="flex-1">
+              <label className="text-sm font-semibold text-text-primary block mb-1">Beim Start minimieren</label>
               <p className="text-xs text-text-secondary">App startet im System Tray</p>
             </div>
-            <input
-              type="checkbox"
-              checked={localSettings.minimizeToTray}
-              onChange={(e) => handleChange('minimizeToTray', e.target.checked)}
-              className="w-4 h-4 text-brand bg-bg-secondary border-bg-primary rounded focus:ring-brand"
-            />
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={localSettings.minimizeToTray}
+                onChange={(e) => handleChange('minimizeToTray', e.target.checked)}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-bg-secondary peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-brand rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
+            </label>
           </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="text-sm font-medium text-text-primary">Benachrichtigungen anzeigen</label>
+          <div className="flex items-center justify-between p-4 bg-bg-primary rounded-lg border border-bg-secondary hover:border-bg-primary transition-colors">
+            <div className="flex-1">
+              <label className="text-sm font-semibold text-text-primary block mb-1">Benachrichtigungen anzeigen</label>
               <p className="text-xs text-text-secondary">System-Benachrichtigungen bei Optimierungen</p>
             </div>
-            <input
-              type="checkbox"
-              checked={localSettings.showNotifications}
-              onChange={(e) => handleChange('showNotifications', e.target.checked)}
-              className="w-4 h-4 text-brand bg-bg-secondary border-bg-primary rounded focus:ring-brand"
-            />
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={localSettings.showNotifications}
+                onChange={(e) => handleChange('showNotifications', e.target.checked)}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-bg-secondary peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-brand rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
+            </label>
           </div>
         </div>
       </Card>

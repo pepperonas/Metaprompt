@@ -51,24 +51,30 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onPageChange, onAboutClick
 
   return (
     <header className="bg-bg-secondary border-b border-bg-primary" style={{ 
-      paddingLeft: '20px', 
-      paddingRight: '80px',
-      paddingTop: '16px',
-      paddingBottom: '16px'
+      paddingLeft: '24px', 
+      paddingRight: '24px',
+      paddingTop: '20px',
+      paddingBottom: '20px'
     } as React.CSSProperties}>
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-text-primary flex-shrink-0">Metaprompt</h1>
-        <nav className="flex items-center space-x-2 flex-shrink-0">
+      <div className="flex items-center justify-between max-w-7xl mx-auto">
+        <div className="flex items-center space-x-3">
+          <h1 className="text-2xl font-bold text-text-primary tracking-tight">Metaprompt</h1>
+          <span className="text-xs text-text-secondary font-medium px-2 py-1 bg-bg-primary rounded-md">
+            Prompt-Optimierer
+          </span>
+        </div>
+        <nav className="flex items-center space-x-1 flex-shrink-0">
           {pages.map((page) => (
             <button
               key={page.id}
               onClick={() => onPageChange(page.id)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                 currentPage === page.id
-                  ? 'bg-brand text-white shadow-lg glow-brand'
-                  : 'text-text-secondary hover:text-text-primary hover:bg-bg-primary'
+                  ? 'bg-brand text-white shadow-lg shadow-brand/30 glow-brand'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-bg-primary active:scale-95'
               }`}
               title={page.label}
+              aria-current={currentPage === page.id ? 'page' : undefined}
             >
               <span className={currentPage === page.id ? 'text-white' : 'text-current'}>
                 {page.icon}
@@ -78,13 +84,14 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onPageChange, onAboutClick
           ))}
           
           {/* Separator */}
-          <div className="w-px h-6 bg-bg-primary mx-1" />
+          <div className="w-px h-7 bg-bg-primary mx-2" />
           
           {/* About button */}
           <button
             onClick={onAboutClick}
-            className="px-3 py-2 rounded-lg text-sm font-medium transition-all text-text-secondary hover:text-text-primary hover:bg-bg-primary"
+            className="px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 text-text-secondary hover:text-text-primary hover:bg-bg-primary active:scale-95"
             title="Über Metaprompt & Anleitung"
+            aria-label="Über Metaprompt"
           >
             Über
           </button>

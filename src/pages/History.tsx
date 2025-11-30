@@ -35,11 +35,11 @@ const History: React.FC = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-8 max-w-7xl mx-auto space-y-8">
       <div>
-        <h2 className="text-2xl font-bold text-text-primary mb-2">Optimierungs-Verlauf</h2>
-        <p className="text-text-secondary">
-          Letzte 20 Optimierungen
+        <h1 className="text-3xl font-bold text-text-primary mb-2">Optimierungs-Verlauf</h1>
+        <p className="text-text-secondary leading-relaxed">
+          Übersicht über die letzten 20 Optimierungen
         </p>
       </div>
 

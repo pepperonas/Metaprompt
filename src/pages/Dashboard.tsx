@@ -134,39 +134,65 @@ const Dashboard: React.FC = () => {
     }));
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-8 max-w-7xl mx-auto space-y-8">
+      {/* Hero Section */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-text-primary mb-2">Dashboard</h1>
+        <p className="text-text-secondary">
+          Verwalte deine Metaprompts, wähle Provider und optimiere Prompts mit einem Klick.
+        </p>
+      </div>
+
       <Card title="Aktive Metaprompt-Vorlage">
-        <div className="space-y-4">
+        <div className="space-y-5">
           {metaprompts.length > 0 ? (
             <>
-              <Select
-                label="Metaprompt auswählen"
-                options={metapromptOptions}
-                value={settings?.activeMetapromptId || metaprompts.find(m => m.isDefault)?.id || metaprompts[0]?.id || ''}
-                onChange={(e) => handleMetapromptChange(e.target.value)}
-              />
+              <div>
+                <Select
+                  label="Metaprompt auswählen"
+                  options={metapromptOptions}
+                  value={settings?.activeMetapromptId || metaprompts.find(m => m.isDefault)?.id || metaprompts[0]?.id || ''}
+                  onChange={(e) => handleMetapromptChange(e.target.value)}
+                />
+              </div>
               {activeMetaprompt && (
-                <div className="mt-4 pt-4 border-t border-bg-secondary">
-                  <h4 className="font-semibold text-text-primary mb-2">{activeMetaprompt.name}</h4>
-                  {activeMetaprompt.description && (
-                    <p className="text-sm text-text-secondary mb-2">{activeMetaprompt.description}</p>
-                  )}
-                  <div className="mt-3">
-                    <p className="text-xs text-text-secondary mb-1 font-medium">Metaprompt-Inhalt:</p>
-                    <p className="text-xs text-text-secondary font-mono bg-bg-primary p-2 rounded border border-bg-secondary max-h-32 overflow-y-auto">
-                      {activeMetaprompt.content.length > 300 
-                        ? `${activeMetaprompt.content.substring(0, 300)}...` 
-                        : activeMetaprompt.content}
-                    </p>
+                <div className="mt-5 pt-5 border-t border-bg-primary">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-lg text-text-primary mb-1.5">{activeMetaprompt.name}</h4>
+                      {activeMetaprompt.description && (
+                        <p className="text-sm text-text-secondary leading-relaxed">{activeMetaprompt.description}</p>
+                      )}
+                    </div>
+                    {activeMetaprompt.isDefault && (
+                      <span className="ml-3 px-2.5 py-1 text-xs font-medium bg-brand/20 text-brand rounded-md border border-brand/30">
+                        Standard
+                      </span>
+                    )}
+                  </div>
+                  <div className="mt-4">
+                    <p className="text-xs font-medium text-text-secondary mb-2 uppercase tracking-wide">Metaprompt-Inhalt</p>
+                    <div className="bg-bg-primary p-3 rounded-lg border border-bg-secondary max-h-40 overflow-y-auto">
+                      <p className="text-xs text-text-secondary font-mono leading-relaxed whitespace-pre-wrap">
+                        {activeMetaprompt.content.length > 400 
+                          ? `${activeMetaprompt.content.substring(0, 400)}...` 
+                          : activeMetaprompt.content}
+                      </p>
+                    </div>
                   </div>
                 </div>
               )}
             </>
           ) : (
-            <div>
-              <p className="text-text-secondary mb-2">Keine Metaprompts vorhanden</p>
-              <p className="text-xs text-text-secondary">
-                Gehe zu "Metaprompts", um eine Vorlage zu erstellen.
+            <div className="text-center py-8">
+              <div className="mb-4">
+                <svg className="w-12 h-12 text-text-secondary mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <p className="text-text-secondary mb-2 font-medium">Keine Metaprompts vorhanden</p>
+              <p className="text-sm text-text-secondary">
+                Gehe zu <span className="text-brand font-medium">Metaprompts</span>, um eine Vorlage zu erstellen.
               </p>
             </div>
           )}
@@ -174,11 +200,11 @@ const Dashboard: React.FC = () => {
       </Card>
 
       <Card title="Provider-Status & Auswahl">
-        <div className="space-y-3">
-          <p className="text-sm text-text-secondary mb-4">
+        <div className="space-y-4">
+          <p className="text-sm text-text-secondary leading-relaxed">
             Wähle einen aktiven Provider. Nur Provider mit gültigem API-Key können ausgewählt werden.
           </p>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {Object.entries(statuses).map(([provider, status]) => {
               const providerId = provider as Provider;
               const isValid = status.isValid;
@@ -190,27 +216,30 @@ const Dashboard: React.FC = () => {
                   key={provider}
                   onClick={() => isClickable && handleProviderChange(providerId)}
                   disabled={!isClickable}
-                  className={`p-4 rounded-lg border-2 transition-all text-left ${
+                  className={`p-5 rounded-xl border-2 transition-all duration-200 text-left group ${
                     isActive && isValid
-                      ? 'border-brand bg-brand bg-opacity-10 glow-brand'
+                      ? 'border-brand bg-brand/10 shadow-lg shadow-brand/20'
                       : isValid
-                      ? 'border-bg-secondary hover:border-brand hover:bg-opacity-5 cursor-pointer'
-                      : 'border-bg-secondary opacity-50 cursor-not-allowed'
+                      ? 'border-bg-primary hover:border-brand/50 hover:bg-brand/5 cursor-pointer active:scale-[0.98]'
+                      : 'border-bg-primary opacity-50 cursor-not-allowed'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center space-x-3">
-                      <div className={`w-3 h-3 rounded-full ${
+                      <div className={`w-3 h-3 rounded-full transition-all ${
                         isValid 
                           ? 'bg-green-500 shadow-lg shadow-green-500/50' 
                           : status.isConfigured 
-                          ? 'bg-red-500' 
+                          ? 'bg-red-500 shadow-lg shadow-red-500/30' 
                           : 'bg-gray-500'
                       }`}></div>
-                      <span className="font-medium text-text-primary">{providerNames[providerId]}</span>
+                      <span className="font-semibold text-text-primary">{providerNames[providerId]}</span>
                     </div>
                     {isActive && isValid && (
-                      <span className="text-brand text-lg">●</span>
+                      <div className="flex items-center space-x-1.5">
+                        <span className="w-2 h-2 bg-brand rounded-full animate-pulse"></span>
+                        <span className="text-xs text-brand font-semibold">Aktiv</span>
+                      </div>
                     )}
                   </div>
                   <div className="flex items-center justify-between">
@@ -223,8 +252,10 @@ const Dashboard: React.FC = () => {
                     }`}>
                       {isValid ? 'Gültig' : status.isConfigured ? 'Ungültig' : 'Nicht konfiguriert'}
                     </span>
-                    {isActive && (
-                      <span className="text-xs text-brand font-medium">Aktiv</span>
+                    {isValid && !isActive && (
+                      <span className="text-xs text-text-secondary group-hover:text-brand transition-colors">
+                        Klicken zum Aktivieren
+                      </span>
                     )}
                   </div>
                 </button>
@@ -235,19 +266,48 @@ const Dashboard: React.FC = () => {
       </Card>
 
       <Card title="Quick Actions">
-        <div className="space-y-4">
-          <Button onClick={handleOptimize} className="w-full" size="lg" disabled={isOptimizing}>
-            {isOptimizing ? 'Optimierung läuft...' : 'Prompt jetzt optimieren'}
-          </Button>
-          <p className="text-sm text-text-secondary">
-            Kopiere einen normalen Prompt in die Zwischenablage und klicke auf den Button, oder verwende den Shortcut:{' '}
-            <span className="font-mono text-text-primary font-medium">
-              {settings?.globalShortcut ? formatShortcut(settings.globalShortcut) : 'Nicht gesetzt'}
-            </span>
-          </p>
-          <p className="text-xs text-text-secondary mt-1">
-            Der aktive Metaprompt wird verwendet, um deinen Prompt zu optimieren.
-          </p>
+        <div className="space-y-5">
+          <div>
+            <Button 
+              onClick={handleOptimize} 
+              className="w-full" 
+              size="lg" 
+              disabled={isOptimizing}
+            >
+              {isOptimizing ? (
+                <span className="flex items-center justify-center space-x-2">
+                  <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>Optimierung läuft...</span>
+                </span>
+              ) : (
+                <span className="flex items-center justify-center space-x-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  <span>Prompt jetzt optimieren</span>
+                </span>
+              )}
+            </Button>
+          </div>
+          <div className="bg-bg-primary rounded-lg p-4 border border-bg-secondary">
+            <div className="space-y-2">
+              <p className="text-sm text-text-secondary leading-relaxed">
+                <strong className="text-text-primary">So funktioniert's:</strong> Kopiere einen normalen Prompt in die Zwischenablage und klicke auf den Button oder verwende den Shortcut.
+              </p>
+              <div className="flex items-center space-x-2 pt-2 border-t border-bg-secondary">
+                <span className="text-xs font-medium text-text-secondary uppercase tracking-wide">Shortcut:</span>
+                <span className="font-mono text-sm text-text-primary font-semibold bg-bg-secondary px-2.5 py-1 rounded border border-bg-primary">
+                  {settings?.globalShortcut ? formatShortcut(settings.globalShortcut) : 'Nicht gesetzt'}
+                </span>
+              </div>
+              <p className="text-xs text-text-secondary mt-2">
+                Der aktive Metaprompt wird verwendet, um deinen Prompt zu optimieren.
+              </p>
+            </div>
+          </div>
         </div>
       </Card>
     </div>

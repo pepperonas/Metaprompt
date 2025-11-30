@@ -100,7 +100,7 @@ function App() {
         onPageChange={setCurrentPage} 
         onAboutClick={() => setShowAbout(true)}
       />
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto bg-bg-primary">
         {renderPage()}
       </main>
       <StatusBar />

@@ -190,48 +190,90 @@ const Metaprompts: React.FC = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-text-primary mb-2">Metaprompts</h2>
-          <p className="text-text-secondary">
+    <div className="p-8 max-w-7xl mx-auto space-y-8">
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <h1 className="text-3xl font-bold text-text-primary mb-2">Metaprompts</h1>
+          <p className="text-text-secondary leading-relaxed max-w-2xl">
             Metaprompts sind Vorlagen, die definieren, wie normale Prompts optimiert werden sollen. 
             Erstelle mehrere Vorlagen und wähle sie im Dashboard aus.
           </p>
         </div>
-        <div className="flex space-x-2">
+        <div className="flex space-x-3 ml-6">
           <Button variant="secondary" onClick={handleGenerate}>
-            Mit KI generieren
+            <span className="flex items-center space-x-2">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <span>Mit KI generieren</span>
+            </span>
           </Button>
-          <Button onClick={handleCreate}>Manuell erstellen</Button>
+          <Button onClick={handleCreate}>
+            <span className="flex items-center space-x-2">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              <span>Manuell erstellen</span>
+            </span>
+          </Button>
         </div>
       </div>
 
       {/* Suche und Filter */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Input
-          placeholder="Metaprompts durchsuchen..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        <Select
-          options={[
-            { value: 'all', label: 'Alle Kategorien' },
-            ...categories.map(cat => ({ value: cat, label: cat }))
-          ]}
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-        />
-      </div>
+      <Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Input
+              placeholder="Metaprompts durchsuchen..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <div>
+            <Select
+              options={[
+                { value: 'all', label: 'Alle Kategorien' },
+                ...categories.map(cat => ({ value: cat, label: cat }))
+              ]}
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            />
+          </div>
+        </div>
+        {filteredMetaprompts.length > 0 && (
+          <div className="mt-4 pt-4 border-t border-bg-primary">
+            <p className="text-sm text-text-secondary">
+              <span className="font-medium text-text-primary">{filteredMetaprompts.length}</span> Metaprompt{filteredMetaprompts.length !== 1 ? 's' : ''} gefunden
+            </p>
+          </div>
+        )}
+      </Card>
 
       <div className="grid grid-cols-1 gap-4">
         {filteredMetaprompts.length === 0 ? (
           <Card>
-            <p className="text-text-secondary text-center py-8">
-              {metaprompts.length === 0 
-                ? 'Keine Metaprompts vorhanden' 
-                : 'Keine Metaprompts gefunden'}
-            </p>
+            <div className="text-center py-12">
+              <div className="mb-4">
+                <svg className="w-16 h-16 text-text-secondary mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <p className="text-text-secondary mb-2 font-medium text-lg">
+                {metaprompts.length === 0 
+                  ? 'Keine Metaprompts vorhanden' 
+                  : 'Keine Metaprompts gefunden'}
+              </p>
+              <p className="text-sm text-text-secondary mb-6">
+                {metaprompts.length === 0 
+                  ? 'Erstelle deinen ersten Metaprompt, um zu beginnen.' 
+                  : 'Versuche andere Suchbegriffe oder wähle eine andere Kategorie.'}
+              </p>
+              {metaprompts.length === 0 && (
+                <Button onClick={handleCreate}>
+                  Ersten Metaprompt erstellen
+                </Button>
+              )}
+            </div>
           </Card>
         ) : (
           filteredMetaprompts.map((mp) => {
@@ -239,34 +281,37 @@ const Metaprompts: React.FC = () => {
             return (
             <Card 
               key={mp.id}
-              className={`${
+              className={`transition-all duration-200 ${
                 isActive && mp.isDefault
-                  ? 'border-2 border-brand bg-brand bg-opacity-5' 
+                  ? 'border-2 border-brand bg-brand/5 shadow-lg shadow-brand/10' 
                   : isActive && !mp.isDefault
-                  ? 'border-2 border-blue-500 bg-blue-500 bg-opacity-5' 
-                  : ''
+                  ? 'border-2 border-blue-500 bg-blue-500/5 shadow-lg shadow-blue-500/10' 
+                  : 'border border-bg-primary hover:border-bg-secondary hover:shadow-xl'
               }`}
             >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2 mb-2">
-                    {mp.isDefault && (
-                      <svg className="w-5 h-5 text-brand" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                    )}
-                    {!mp.isDefault && (
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center flex-wrap gap-2 mb-3">
+                    {mp.isDefault ? (
+                      <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 bg-brand/20 text-brand rounded-md border border-brand/30 text-xs font-semibold">
+                        <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span>Standard</span>
+                      </span>
+                    ) : (
                       <button
                         onClick={async () => {
                           try {
                             await toggleFavorite(mp.id);
-                            await loadMetaprompts(); // Liste neu laden für korrekte Sortierung
+                            await loadMetaprompts();
                           } catch (error) {
                             console.error('Fehler beim Setzen der Favoriten:', error);
                           }
                         }}
-                        className="focus:outline-none hover:opacity-80 transition-opacity p-1"
+                        className="focus:outline-none hover:opacity-80 transition-opacity p-1 -ml-1"
                         title={mp.isFavorite ? 'Aus Favoriten entfernen' : 'Als Favorit markieren'}
+                        aria-label={mp.isFavorite ? 'Aus Favoriten entfernen' : 'Als Favorit markieren'}
                       >
                         <svg 
                           className={`w-5 h-5 transition-all ${mp.isFavorite ? 'text-yellow-500 fill-current' : 'text-text-secondary hover:text-yellow-400'}`} 
@@ -283,25 +328,36 @@ const Metaprompts: React.FC = () => {
                       {mp.name}
                     </h3>
                     {mp.category && (
-                      <span className="text-xs px-2 py-1 bg-bg-secondary rounded text-text-secondary">
+                      <span className="text-xs px-2.5 py-1 bg-bg-primary rounded-md text-text-secondary border border-bg-secondary font-medium">
                         {mp.category}
+                      </span>
+                    )}
+                    {isActive && (
+                      <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 bg-green-500/20 text-green-400 rounded-md border border-green-500/30 text-xs font-semibold">
+                        <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
+                        <span>Aktiv</span>
                       </span>
                     )}
                   </div>
                   {mp.description && (
-                    <p className="text-sm text-text-secondary mb-2">{mp.description}</p>
+                    <p className="text-sm text-text-secondary mb-3 leading-relaxed">{mp.description}</p>
                   )}
-                  <p className="text-xs text-text-secondary">
-                    Erstellt: {new Date(mp.createdAt).toLocaleDateString('de-DE')} | 
-                    Aktualisiert: {new Date(mp.updatedAt).toLocaleDateString('de-DE')}
-                  </p>
-                </div>
-                <div className="flex space-x-2 ml-4">
-                  {settings?.activeMetapromptId === mp.id && (
-                    <span className="text-xs px-3 py-1 bg-green-500 bg-opacity-30 text-green-300 rounded border border-green-500/50 font-medium">
-                      Aktiv
+                  <div className="flex items-center space-x-4 text-xs text-text-secondary">
+                    <span className="flex items-center space-x-1">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <span>Erstellt: {new Date(mp.createdAt).toLocaleDateString('de-DE')}</span>
                     </span>
-                  )}
+                    <span className="flex items-center space-x-1">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      <span>Aktualisiert: {new Date(mp.updatedAt).toLocaleDateString('de-DE')}</span>
+                    </span>
+                  </div>
+                </div>
+                <div className="flex space-x-2 flex-shrink-0">
                   {!mp.isDefault && (
                     <>
                       <Button
