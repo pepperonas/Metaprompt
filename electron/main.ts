@@ -96,6 +96,17 @@ const createWindow = (): void => {
 };
 
 app.whenReady().then(() => {
+  // Entferne Quarantäne-Attribut beim Start (falls vorhanden)
+  if (process.platform === 'darwin' && app.isPackaged) {
+    try {
+      const { execSync } = require('child_process');
+      const appPath = app.getPath('exe').replace('/Contents/MacOS/Metaprompt', '');
+      execSync(`xattr -d com.apple.quarantine "${appPath}" 2>/dev/null || true`, { stdio: 'ignore' });
+    } catch (error) {
+      // Ignoriere Fehler (App läuft trotzdem)
+    }
+  }
+  
   // Stelle sicher, dass der App-Name gesetzt ist (für macOS Dock)
   // Muss nach app.whenReady() nochmal gesetzt werden für macOS
   app.setName('Metaprompt');
