@@ -1,4 +1,4 @@
-import type { OptimizationRequest, Provider } from '../types';
+import type { OptimizationRequest } from '../types';
 import { optimizeOpenAI } from './api/openai';
 import { optimizeAnthropic } from './api/anthropic';
 import { optimizeGrok } from './api/grok';

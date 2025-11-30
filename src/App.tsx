@@ -10,7 +10,6 @@ import Header from './components/layout/Header';
 import StatusBar from './components/layout/StatusBar';
 import { AboutDialog } from './components/ui/AboutDialog';
 import { OnboardingDialog } from './components/ui/OnboardingDialog';
-import { GuideDialog } from './components/ui/GuideDialog';
 import type { Provider } from './types';
 
 type Page = 'dashboard' | 'metaprompts' | 'settings' | 'history';

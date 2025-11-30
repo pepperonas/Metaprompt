@@ -10,7 +10,7 @@ import type { Provider } from '../types';
 
 const Dashboard: React.FC = () => {
   const { settings, loadSettings } = useSettingsStore();
-  const { keys, statuses, loadApiKey, checkStatus } = useApiKeysStore();
+  const { statuses, loadApiKey } = useApiKeysStore();
   const { metaprompts, loadMetaprompts } = useMetapromptsStore();
 
   useEffect(() => {
