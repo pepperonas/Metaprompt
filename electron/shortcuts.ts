@@ -5,6 +5,7 @@ import { optimizePrompt } from './optimizer';
 import { showNotification } from './notifications';
 import { BrowserWindow } from 'electron';
 import { updateTrayMenu } from './tray';
+import { updateApplicationMenu } from './menu';
 
 // Zentrale Funktion zum Auslösen der Optimierung (wird von Shortcut und Tray verwendet)
 export const triggerOptimization = async (mainWindow: BrowserWindow | null): Promise<void> => {
@@ -102,7 +103,8 @@ const switchToNextMetaprompt = (mainWindow: BrowserWindow | null): void => {
 
   const nextMetaprompt = metaprompts[nextIndex];
   setSettings({ activeMetapromptId: nextMetaprompt.id });
-  updateTrayMenu(mainWindow);
+    updateTrayMenu(mainWindow);
+    updateApplicationMenu();
   
   // Event an Renderer senden
   if (mainWindow && !mainWindow.isDestroyed()) {
@@ -129,7 +131,8 @@ const switchToPrevMetaprompt = (mainWindow: BrowserWindow | null): void => {
 
   const prevMetaprompt = metaprompts[prevIndex];
   setSettings({ activeMetapromptId: prevMetaprompt.id });
-  updateTrayMenu(mainWindow);
+    updateTrayMenu(mainWindow);
+    updateApplicationMenu();
   
   // Event an Renderer senden
   if (mainWindow && !mainWindow.isDestroyed()) {

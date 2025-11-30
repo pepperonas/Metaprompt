@@ -27,6 +27,9 @@ declare global {
       onProviderChange: (callback: (provider: Provider) => void) => () => void;
       onMetapromptChange: (callback: (id: string) => void) => () => void;
       onNavigate: (callback: (page: string) => void) => () => void;
+      onShowGuide: (callback: () => void) => () => void;
+      onShowOnboarding: (callback: () => void) => () => void;
+      onShowAbout: (callback: () => void) => () => void;
     };
   }
 }

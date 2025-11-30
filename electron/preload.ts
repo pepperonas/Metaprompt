@@ -63,6 +63,18 @@ contextBridge.exposeInMainWorld('mrp', {
     ipcRenderer.on('navigate', (_event, page) => callback(page));
     return () => ipcRenderer.removeAllListeners('navigate');
   },
+  onShowGuide: (callback: () => void) => {
+    ipcRenderer.on('show:guide', callback);
+    return () => ipcRenderer.removeAllListeners('show:guide');
+  },
+  onShowOnboarding: (callback: () => void) => {
+    ipcRenderer.on('show:onboarding', callback);
+    return () => ipcRenderer.removeAllListeners('show:onboarding');
+  },
+  onShowAbout: (callback: () => void) => {
+    ipcRenderer.on('show:about', callback);
+    return () => ipcRenderer.removeAllListeners('show:about');
+  },
 });
 
 // TypeScript-Deklarationen für window.mrp

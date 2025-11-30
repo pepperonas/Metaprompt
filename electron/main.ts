@@ -3,6 +3,7 @@ import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import path from 'path';
 import { createTray, updateTrayMenu, destroyTray } from './tray';
+import { createApplicationMenuBar, updateApplicationMenu, setMainWindow } from './menu';
 import { registerGlobalShortcut, unregisterAllShortcuts, registerMetapromptShortcuts } from './shortcuts';
 import { getSettings, setSettings, getApiKey, setApiKey, getMetaprompts, saveMetaprompt, deleteMetaprompt, toggleFavorite, getHistory, addHistory } from './store';
 import { getCostsLast30Days } from './costTracking';
@@ -76,10 +77,14 @@ const createWindow = (): void => {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+    setMainWindow(null);
   });
 
   // Tray erstellen
   createTray(mainWindow);
+
+  // Application Menu Bar erstellen
+  createApplicationMenuBar(mainWindow);
 
   // Global Shortcuts registrieren
   const settings = getSettings();
@@ -219,6 +224,7 @@ ipcMain.handle('settings:get', () => getSettings());
 ipcMain.handle('settings:set', (_event, settings: Partial<Settings>) => {
   setSettings(settings);
   updateTrayMenu(mainWindow);
+  updateApplicationMenu();
   
   // Shortcuts neu registrieren falls geändert
   if (settings.globalShortcut !== undefined) {
@@ -269,6 +275,7 @@ ipcMain.handle('metaprompts:get', () => getMetaprompts());
 ipcMain.handle('metaprompts:save', (_event, mp: Metaprompt) => {
   saveMetaprompt(mp);
   updateTrayMenu(mainWindow);
+  updateApplicationMenu();
 });
 ipcMain.handle('metaprompts:delete', (_event, id: string) => {
   const metaprompts = getMetaprompts();
@@ -281,10 +288,12 @@ ipcMain.handle('metaprompts:delete', (_event, id: string) => {
   
   deleteMetaprompt(id);
   updateTrayMenu(mainWindow);
+  updateApplicationMenu();
 });
 ipcMain.handle('metaprompts:toggleFavorite', (_event, id: string) => {
   toggleFavorite(id);
   updateTrayMenu(mainWindow);
+  updateApplicationMenu();
 });
 
 // Notifications
@@ -464,6 +473,25 @@ ipcMain.handle('app:getVersion', () => {
 ipcMain.on('navigate', (_event, page: string) => {
   if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.webContents.send('navigate', page);
+  }
+});
+
+// Dialog Events
+ipcMain.on('show:guide', () => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('show:guide');
+  }
+});
+
+ipcMain.on('show:onboarding', () => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('show:onboarding');
+  }
+});
+
+ipcMain.on('show:about', () => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('show:about');
   }
 });
 

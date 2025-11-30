@@ -41,13 +41,15 @@ function App() {
       loadApiKey(provider);
     });
 
-    // Listen for provider changes from tray
+    // Listen for provider changes from tray/menu
     const unsubscribeProvider = window.mrp.onProviderChange((provider: Provider) => {
       useSettingsStore.getState().updateSettings({ activeProvider: provider });
+      // Menüleiste wird automatisch aktualisiert, da sie die Settings liest
     });
 
     const unsubscribeMetaprompt = window.mrp.onMetapromptChange((id: string) => {
       useSettingsStore.getState().updateSettings({ activeMetapromptId: id });
+      // Menüleiste wird automatisch aktualisiert, da sie die Settings liest
     });
 
     const unsubscribeNavigate = window.mrp.onNavigate((page: string) => {
@@ -56,10 +58,25 @@ function App() {
       }
     });
 
+    const unsubscribeShowGuide = window.mrp.onShowGuide(() => {
+      setShowGuide(true);
+    });
+
+    const unsubscribeShowOnboarding = window.mrp.onShowOnboarding(() => {
+      setShowOnboarding(true);
+    });
+
+    const unsubscribeShowAbout = window.mrp.onShowAbout(() => {
+      setShowAbout(true);
+    });
+
     return () => {
       unsubscribeProvider();
       unsubscribeMetaprompt();
       unsubscribeNavigate();
+      unsubscribeShowGuide();
+      unsubscribeShowOnboarding();
+      unsubscribeShowAbout();
     };
   }, []);
 
