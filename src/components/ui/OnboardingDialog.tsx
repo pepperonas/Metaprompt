@@ -212,7 +212,7 @@ export const OnboardingDialog: React.FC<OnboardingDialogProps> = ({ isOpen, onCl
         }
       }}
     >
-      <Card className="max-w-2xl w-full mx-4 min-h-[550px] max-h-[650px] flex flex-col">
+      <Card className="max-w-2xl w-full mx-4 h-[600px] flex flex-col">
         {/* Header - Fixed */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-bg-primary flex-shrink-0">
           <div className="flex items-center space-x-3">
