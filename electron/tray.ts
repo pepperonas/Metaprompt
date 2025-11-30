@@ -298,18 +298,48 @@ export const createTray = (mainWindow: BrowserWindow | null): void => {
 
   updateMenu();
 
-  // Linksklick: Fenster immer öffnen/anzeigen
-  tray.on('click', () => {
-    if (mainWindow) {
-      if (mainWindow.isVisible()) {
-        // Wenn Fenster bereits sichtbar ist, nur fokussieren
-        mainWindow.focus();
-      } else {
-        // Wenn Fenster versteckt ist, anzeigen und fokussieren
-        mainWindow.show();
-        mainWindow.focus();
+  // Linksklick: Fenster öffnen/schließen (Toggle)
+  // Auf macOS: Ignoriere Doppelklick-Events für besseres Verhalten
+  if (process.platform === 'darwin') {
+    tray.setIgnoreDoubleClickEvents(true);
+  }
+  
+  // Toggle-Funktion für Fenster
+  const toggleWindow = () => {
+    console.log('[Tray] Toggle window', { 
+      visible: mainWindow?.isVisible(), 
+      focused: mainWindow?.isFocused(),
+      exists: !!mainWindow 
+    });
+    
+    if (!mainWindow) {
+      console.warn('[Tray] mainWindow is null, cannot toggle');
+      return;
+    }
+    
+    if (mainWindow.isVisible() && mainWindow.isFocused()) {
+      // Wenn Fenster sichtbar und fokussiert ist, verstecken
+      console.log('[Tray] Hiding window');
+      mainWindow.hide();
+    } else {
+      // Wenn Fenster versteckt oder nicht fokussiert ist, anzeigen und fokussieren
+      console.log('[Tray] Showing and focusing window');
+      mainWindow.show();
+      mainWindow.focus();
+      // Auf macOS: Stelle sicher, dass das Fenster im Vordergrund ist
+      if (process.platform === 'darwin') {
+        app.dock?.show();
+        // Zusätzlich: Stelle sicher, dass die App aktiv ist
+        app.focus({ steal: true });
       }
     }
+  };
+  
+  // Linksklick: Toggle Fenster
+  tray.on('click', (event, bounds) => {
+    // Verhindere, dass das Kontextmenü automatisch erscheint
+    event.preventDefault();
+    toggleWindow();
   });
 
   // Rechtsklick: Kontextmenü
@@ -318,6 +348,12 @@ export const createTray = (mainWindow: BrowserWindow | null): void => {
       tray.popUpContextMenu();
     }
   });
+  
+  // Auf macOS: Auch auf 'click' Event reagieren (falls right-click nicht funktioniert)
+  if (process.platform === 'darwin') {
+    // Zusätzlicher Handler für macOS-spezifisches Verhalten
+    tray.on('click', toggleWindow);
+  }
 
   // Menü bei Änderungen aktualisieren
   if (mainWindow) {
