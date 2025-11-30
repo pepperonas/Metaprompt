@@ -120,6 +120,13 @@ export const deleteMetaprompt = (id: string): void => {
 
 export const toggleFavorite = (id: string): void => {
   const metaprompts = getMetaprompts();
+  const metaprompt = metaprompts.find(m => m.id === id);
+  
+  // Verhindere, dass der Standard-Metaprompt als Favorit gesetzt wird
+  if (metaprompt?.isDefault) {
+    throw new Error('Der Standard-Metaprompt kann nicht als Favorit gesetzt werden');
+  }
+  
   const index = metaprompts.findIndex(m => m.id === id);
   
   if (index >= 0) {
