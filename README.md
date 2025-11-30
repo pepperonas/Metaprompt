@@ -197,17 +197,11 @@ metaprompt/
 ├── tsconfig.node.json         # TypeScript Config (Node/Electron)
 ├── vite.config.ts             # Vite Build Config
 ├── tailwind.config.js         # Tailwind CSS Config
+├── postcss.config.js          # PostCSS Config
 ├── LICENSE                    # MIT License
 ├── CONTRIBUTING.md            # Contribution Guidelines
 ├── CHANGELOG.md               # Version Changelog
-├── README.md                  # Project Documentation
-├── package.json               # Project Dependencies & Scripts
-├── electron-builder.yml       # Electron Builder Config
-├── vite.config.ts             # Vite Build Config
-├── tsconfig.json              # TypeScript Config (Frontend)
-├── tsconfig.node.json         # TypeScript Config (Node/Electron)
-├── tailwind.config.js         # Tailwind CSS Config
-└── postcss.config.js          # PostCSS Config
+└── README.md                  # Project Documentation
 ```
 
 **Hinweis:** Build-Output (`dist/`, `dist-electron/`) und `node_modules/` sind in `.gitignore` und werden nicht versioniert.
