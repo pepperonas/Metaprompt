@@ -75,12 +75,16 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onPageChange, onAboutClick
   ];
 
   return (
-    <header className="bg-bg-secondary border-b border-bg-primary" style={{ 
-      paddingLeft: '24px', 
-      paddingRight: '24px',
-      paddingTop: '20px',
-      paddingBottom: '20px'
-    } as React.CSSProperties}>
+    <header 
+      className="bg-bg-secondary border-b border-bg-primary" 
+      style={{ 
+        paddingLeft: '24px', 
+        paddingRight: '24px',
+        paddingTop: '20px',
+        paddingBottom: '20px',
+        WebkitAppRegion: 'drag' as any
+      } as React.CSSProperties}
+    >
       <div className="flex items-center justify-between max-w-7xl mx-auto">
         <div className="flex items-center space-x-3">
           <h1 className="text-2xl font-bold text-text-primary tracking-tight">Metaprompt</h1>
@@ -99,6 +103,7 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onPageChange, onAboutClick
                   ? 'bg-brand text-white shadow-lg shadow-brand/30 glow-brand'
                   : 'text-text-secondary hover:text-text-primary hover:bg-bg-primary active:scale-95'
               }`}
+              style={{ WebkitAppRegion: 'no-drag' as any }}
               title={page.label}
               aria-current={currentPage === page.id ? 'page' : undefined}
             >

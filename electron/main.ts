@@ -44,6 +44,7 @@ const createWindow = (): void => {
     backgroundColor: '#1A1C27',
     titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'default',
     frame: true,
+    movable: true,
     titleBarOverlay: process.platform === 'darwin' ? {
       color: '#2C2E3B',
       symbolColor: '#FFFFFF',
