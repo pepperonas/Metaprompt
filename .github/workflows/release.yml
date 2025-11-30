@@ -19,11 +19,11 @@ jobs:
             build_command: npm run build && electron-builder --mac --publish never
           - os: windows-latest
             platform: win
-            artifact_name: MRP-*-Windows-Portable.exe
+            artifact_name: MRP-*-Windows-Setup.exe
             build_command: npm run build && electron-builder --win --publish never
           - os: ubuntu-latest
             platform: linux
-            artifact_name: MRP-*-x86_64.AppImage
+            artifact_name: MRP-*-Linux.*
             build_command: npm run build && electron-builder --linux --publish never
 
     steps:
@@ -52,23 +52,40 @@ jobs:
           if [ "${{ matrix.platform }}" == "mac" ]; then
             ARTIFACT=$(find dist -name "MRP-*-macOS.dmg" -type f | head -1)
           elif [ "${{ matrix.platform }}" == "win" ]; then
-            ARTIFACT=$(find dist -name "MRP-*-Windows-Portable.exe" -type f | head -1)
+            ARTIFACT=$(find dist -name "MRP-*-Windows-Setup.exe" -type f | head -1)
           elif [ "${{ matrix.platform }}" == "linux" ]; then
-            ARTIFACT=$(find dist -name "MRP-*-x86_64.AppImage" -type f | head -1)
+            # Linux hat mehrere Artefakte (deb, rpm, AppImage)
+            # Finde alle Linux-Artefakte
+            ARTIFACTS=$(find dist -type f \( -name "MRP-*-Linux.deb" -o -name "MRP-*-Linux.rpm" -o -name "MRP-*-x86_64.AppImage" \))
+            if [ -z "$ARTIFACTS" ]; then
+              echo "Error: No Linux artifacts found"
+              ls -la dist/ || echo "dist directory not found"
+              exit 1
+            fi
+            # Speichere alle Artefakte (jede Zeile einzeln)
+            echo "artifact<<EOF" >> $GITHUB_OUTPUT
+            echo "$ARTIFACTS" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+            echo "Found Linux artifacts:"
+            echo "$ARTIFACTS" | while read -r line; do
+              echo "  - $line"
+            done
+          else
+            if [ -z "$ARTIFACT" ]; then
+              echo "Error: No artifact found for ${{ matrix.platform }}"
+              ls -la dist/ || echo "dist directory not found"
+              exit 1
+            fi
+            echo "artifact=$ARTIFACT" >> $GITHUB_OUTPUT
+            echo "Found artifact: $ARTIFACT"
           fi
-          if [ -z "$ARTIFACT" ]; then
-            echo "Error: No artifact found for ${{ matrix.platform }}"
-            ls -la dist/ || echo "dist directory not found"
-            exit 1
-          fi
-          echo "artifact=$ARTIFACT" >> $GITHUB_OUTPUT
-          echo "Found artifact: $ARTIFACT"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.platform }}-build
-          path: ${{ steps.find_artifacts.outputs.artifact }}
+          path: |
+            ${{ steps.find_artifacts.outputs.artifact }}
           retention-days: 30
           if-no-files-found: error
 
@@ -110,7 +127,7 @@ jobs:
         run: |
           echo "Artifacts in dist/:"
           ls -lh dist/ || echo "No dist directory found"
-          find dist -type f -name "*.dmg" -o -name "*.exe" -o -name "*.AppImage" || echo "No build artifacts found"
+          find dist -type f \( -name "*.dmg" -o -name "*.exe" -o -name "*.deb" -o -name "*.rpm" -o -name "*.AppImage" \) || echo "No build artifacts found"
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -120,21 +137,34 @@ jobs:
           body: |
             ## MRP - Prompt-Optimierer ${{ steps.get_version.outputs.version }}
             
-            ### Downloads
-            - **macOS**: MRP-${{ steps.get_version.outputs.version }}-macOS.dmg (Universal Build für Intel und Apple Silicon)
-            - **Windows**: MRP-${{ steps.get_version.outputs.version }}-Windows-Portable.exe
-            - **Linux**: MRP-${{ steps.get_version.outputs.version }}-x86_64.AppImage
+            ### Downloads & Installation
             
-            ### Installation
-            - **macOS**: Öffne die DMG-Datei und ziehe MRP.app nach Applications
-            - **Windows**: Führe die Portable-EXE-Datei aus
-            - **Linux**: Mache die AppImage-Datei ausführbar (`chmod +x`) und starte sie
+            #### macOS
+            - **Installer**: MRP-${{ steps.get_version.outputs.version }}-macOS.dmg
+              - Öffne die DMG-Datei und ziehe MRP.app nach Applications
+              - Universal Build für Intel und Apple Silicon
+            
+            #### Windows
+            - **Installer**: MRP-${{ steps.get_version.outputs.version }}-Windows-Setup.exe
+              - Führe die Setup-Datei aus und folge dem Installationsassistenten
+              - Die App wird automatisch im Startmenü und auf dem Desktop verlinkt
+            
+            #### Linux
+            - **DEB Package** (Debian/Ubuntu): MRP-${{ steps.get_version.outputs.version }}-Linux.deb
+              - Installation: `sudo dpkg -i MRP-*.deb` oder Doppelklick in einem Paket-Manager
+            - **RPM Package** (Fedora/RedHat): MRP-${{ steps.get_version.outputs.version }}-Linux.rpm
+              - Installation: `sudo rpm -i MRP-*.rpm` oder Doppelklick in einem Paket-Manager
+            - **AppImage** (Portable): MRP-${{ steps.get_version.outputs.version }}-x86_64.AppImage
+              - Mache die Datei ausführbar: `chmod +x MRP-*.AppImage`
+              - Starte die App: `./MRP-*.AppImage`
             
             ### Änderungen
             Siehe [CHANGELOG.md](CHANGELOG.md) für Details.
           files: |
             dist/MRP-*-macOS.dmg
-            dist/MRP-*-Windows-Portable.exe
+            dist/MRP-*-Windows-Setup.exe
+            dist/MRP-*-Linux.deb
+            dist/MRP-*-Linux.rpm
             dist/MRP-*-x86_64.AppImage
           draft: false
           prerelease: false

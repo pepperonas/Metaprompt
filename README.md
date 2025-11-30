@@ -36,12 +36,14 @@ npm install
 ### Entwicklung starten
 
 ```bash
-npm run electron:dev
+npm run dev
 ```
 
 Dies startet:
 - Vite Dev Server auf http://localhost:5173
-- Electron App
+- Electron App (automatisch via vite-plugin-electron)
+- Hot Module Replacement (HMR) für React-Komponenten
+- Automatisches Neuladen bei Änderungen im Electron-Code
 
 ### Build
 
@@ -50,12 +52,19 @@ Dies startet:
 npm run build:all
 
 # Spezifische Plattform
-npm run build:win
-npm run build:mac
-npm run build:linux
+npm run build:win    # Erstellt Windows Installer (.exe)
+npm run build:mac    # Erstellt macOS DMG Installer
+npm run build:linux  # Erstellt Linux DEB, RPM und AppImage
 ```
 
-Die Builds werden im `dist/` Verzeichnis erstellt.
+Die Builds werden im `dist/` Verzeichnis erstellt:
+
+- **Windows**: `MRP-{version}-Windows-Setup.exe` (NSIS Installer)
+- **macOS**: `MRP-{version}-macOS.dmg` (DMG Installer)
+- **Linux**: 
+  - `MRP-{version}-Linux.deb` (Debian/Ubuntu)
+  - `MRP-{version}-Linux.rpm` (Fedora/RedHat)
+  - `MRP-{version}-x86_64.AppImage` (Portable)
 
 ## Verwendung
 
@@ -98,22 +107,68 @@ Metaprompts sind Vorlagen, die definieren, wie Prompts optimiert werden sollen:
 
 ```
 mrp/
-├── electron/          # Electron Main Process
-├── src/              # React Frontend
-│   ├── components/   # UI Komponenten
-│   ├── pages/        # Seiten
-│   ├── stores/       # Zustand Stores
-│   ├── services/     # API Services
-│   ├── types/        # TypeScript Typen
-│   └── utils/        # Utility-Funktionen
-├── resources/        # Icons & Assets
-│   ├── icons/        # Icon-Assets (SVG, PNG in verschiedenen Größen)
-│   ├── icon.ico      # Windows Icon
-│   ├── icon.icns     # macOS Icon
-│   └── icon.png      # Linux Icon
-├── dist/             # Build Output
-└── dist-electron/    # Electron Build Output
+├── electron/                    # Electron Main Process (TypeScript Source)
+│   ├── main.ts                  # Electron Entry Point
+│   ├── preload.ts             # Preload Script (IPC Bridge)
+│   ├── store.ts               # electron-store Configuration
+│   ├── tray.ts                # System Tray Integration
+│   ├── shortcuts.ts           # Global Shortcut Registration
+│   ├── clipboard.ts           # Clipboard Operations
+│   ├── notifications.ts       # Native Notifications
+│   ├── optimizer.ts           # Prompt Optimization Logic
+│   ├── validateApiKey.ts      # API Key Validation
+│   └── costTracking.ts       # Cost Tracking (optional)
+├── src/                        # React Frontend (TypeScript)
+│   ├── main.tsx               # React Entry Point
+│   ├── App.tsx                # Root Component
+│   ├── components/            # UI Komponenten
+│   │   ├── ui/                # Reusable UI Components
+│   │   ├── layout/            # Layout Components
+│   │   └── features/          # Feature Components
+│   ├── pages/                 # Seiten (Dashboard, ApiKeys, etc.)
+│   ├── stores/                 # Zustand Stores
+│   ├── services/               # API Services
+│   │   └── api/                # Provider-specific API Clients
+│   ├── types/                  # TypeScript Typen
+│   ├── utils/                  # Utility-Funktionen
+│   └── styles/                 # Global Styles (Tailwind)
+├── resources/                  # Icons & Assets
+│   ├── icons/                  # Icon-Assets (SVG, PNG in verschiedenen Größen)
+│   ├── icon.ico                # Windows Icon
+│   ├── icon.icns               # macOS Icon
+│   ├── icon.png                # Linux Icon
+│   └── Info.plist              # macOS App Configuration
+├── .github/                    # GitHub Configuration
+│   └── workflows/              # GitHub Actions
+│       └── release.yml         # Automated Release Workflow
+├── dist/                        # Build Output (Frontend)
+├── dist-electron/              # Electron Build Output (wird ignoriert)
+├── electron-builder.yml        # Electron Builder Configuration
+├── vite.config.ts              # Vite Configuration
+├── tsconfig.json               # TypeScript Configuration
+├── tsconfig.electron.json      # Electron-specific TypeScript Config
+├── tailwind.config.js          # Tailwind CSS Configuration
+├── postcss.config.js           # PostCSS Configuration
+├── package.json                # Project Dependencies & Scripts
+└── README.md                   # Diese Datei
 ```
+
+### Wichtige Dateien (NICHT löschen!)
+
+**Source-Dateien (werden in Git versioniert):**
+- `electron/*.ts` - Alle Electron Main Process Dateien
+- `src/**/*.tsx` / `src/**/*.ts` - Alle React Frontend Dateien
+- `resources/**` - Alle Icons und Assets
+- `electron-builder.yml` - Build-Konfiguration
+- `vite.config.ts` - Vite/Electron Integration
+- `package.json` - Dependencies und Scripts
+- `tsconfig*.json` - TypeScript Konfigurationen
+- `tailwind.config.js` - Tailwind CSS Konfiguration
+
+**Build-Output (werden ignoriert, nicht in Git):**
+- `dist/` - Frontend Build Output
+- `dist-electron/` - Electron Build Output
+- `node_modules/` - Dependencies
 
 ## Technologie-Stack
 
@@ -146,6 +201,30 @@ Die App verwendet **Semantische Versionierung** im Format `MAJOR.MINOR.PATCH`:
 - `1.9.0` → `1.9.1` → ... → `1.9.9` → `2.0.0`
 
 **Wichtig:** Diese Richtlinien müssen bei jeder Versionserhöhung befolgt werden. Siehe auch [VERSIONING.md](./VERSIONING.md) für detaillierte Informationen.
+
+## Wichtige Hinweise
+
+### Dateien-Schutz
+
+⚠️ **WICHTIG**: Source-Dateien in `electron/` und `src/` müssen in Git versioniert werden!
+
+Siehe [IMPORTANT_FILES.md](./IMPORTANT_FILES.md) für eine vollständige Liste aller wichtigen Dateien, die nicht gelöscht werden sollten.
+
+### Build-Output
+
+Die Verzeichnisse `dist/` und `dist-electron/` werden bei jedem Build neu erstellt und sind in `.gitignore`. Diese können gelöscht werden, ohne dass Source-Code verloren geht.
+
+### Wiederherstellung nach versehentlichem Löschen
+
+Falls wichtige Dateien verloren gehen:
+
+```bash
+# Alle Dateien aus einem Commit wiederherstellen
+git checkout <commit-hash> -- .
+
+# Spezifische Datei wiederherstellen
+git checkout <commit-hash> -- <file-path>
+```
 
 ## Lizenz
 

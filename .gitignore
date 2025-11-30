@@ -6,10 +6,13 @@ node_modules/
 # Testing
 coverage/
 
-# Production
+# Production Build Output (werden bei jedem Build neu erstellt)
 dist/
 dist-electron/
+
+# Build-Konfiguration (installer.nsh wird versioniert)
 build/
+!build/installer.nsh
 
 # Misc
 .DS_Store

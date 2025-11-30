@@ -18,15 +18,26 @@ files:
 asar:
   smartUnpack: true
 
-# Windows - Portable
+# Windows - NSIS Installer
 win:
   target:
-    - target: portable
+    - target: nsis
       arch: [x64]
   icon: resources/icon.ico
+  publisherName: "Martin Pfeffer | celox.io"
 
-portable:
-  artifactName: "MRP-${version}-Windows-Portable.exe"
+nsis:
+  oneClick: true
+  allowToChangeInstallationDirectory: false
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  shortcutName: MRP
+  artifactName: "MRP-${version}-Windows-Setup.exe"
+  installerIcon: resources/icon.ico
+  uninstallerIcon: resources/icon.ico
+  installerHeaderIcon: resources/icon.ico
+  runAfterFinish: false
+  menuCategory: false
 
 # macOS - DMG
 mac:
@@ -60,13 +71,26 @@ dmg:
       type: link
       path: /Applications
 
-# Linux - AppImage
+# Linux - DEB und RPM Installer
 linux:
   target:
+    - target: deb
+      arch: [x64]
+    - target: rpm
+      arch: [x64]
     - target: AppImage
       arch: [x64]
   icon: resources/icon.png
   category: Utility
+  vendor: "Martin Pfeffer | celox.io"
+  maintainer: "Martin Pfeffer <info@celox.io>"
+
+deb:
+  artifactName: "MRP-${version}-Linux.deb"
+  priority: optional
+
+rpm:
+  artifactName: "MRP-${version}-Linux.rpm"
 
 # Keine Auto-Updates für Portable
 publish: null
